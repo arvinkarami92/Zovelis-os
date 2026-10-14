@@ -10,10 +10,14 @@ checks look at the whole tree.
 """
 from __future__ import annotations
 
+import base64
 import configparser
 import json
 import re
+import shutil
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import yaml
@@ -187,6 +191,24 @@ ipolicy = (PKG / "calamares-settings-zovelis/data/org.zovelis.installer.policy")
 check("/usr/libexec/zovelis-installer/run-calamares" in ipolicy, "installer polkit action guards run-calamares")
 rules = (PKG / "calamares-settings-zovelis/data/49-zovelis-installer.rules").read_text()
 check("/run/live/medium" in rules, "password-less installer start is limited to the live system")
+
+# --- Flathub ----------------------------------------------------------------
+# The remote description in the source tree must carry the pinned key.
+flathub = PKG / "zovelis-base/files/usr/share/flatpak/remotes.d/flathub.flatpakrepo"
+pin = (PKG / "zovelis-base/flathub.fingerprint").read_text().strip()
+repo = ini(flathub)["Flatpak Repo"]
+check(repo.get("Url", "").rstrip("/") == "https://dl.flathub.org/repo", "Flathub remote points at dl.flathub.org")
+check(re.fullmatch(r"[0-9A-F]{40}", pin) is not None, "Flathub key pin is a full fingerprint")
+if shutil.which("gpg"):
+    with tempfile.TemporaryDirectory() as home:
+        keyfile = Path(home) / "key.gpg"
+        keyfile.write_bytes(base64.b64decode(repo["GPGKey"], validate=True))
+        listing = subprocess.run(["gpg", "--homedir", home, "--batch", "--with-colons", "--show-keys", str(keyfile)],
+                                 capture_output=True, text=True, check=False).stdout
+    primary = next((line.split(":")[9] for line in listing.splitlines() if line.startswith("fpr:")), "")
+    check(primary == pin, f"Flathub remote key matches the pin ({pin})")
+else:
+    print("skip: gpg not installed, Flathub key not compared with the pin")
 
 if failures:
     print(f"{len(failures)} consistency check(s) failed")

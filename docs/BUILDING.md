@@ -6,8 +6,7 @@
   virtual machine, a container (`--privileged`, because live-build mounts
   `/proc` and friends inside the image chroot) or a chroot.
 * About **25 GB** of free disk space and 4 GB of RAM.
-* Internet access to `deb.debian.org`, `security.debian.org` and (once, for
-  the Flathub key) `dl.flathub.org`.
+* Internet access to `deb.debian.org` and `security.debian.org`.
 * Time: about 30–60 minutes on a 4-core machine (package downloads, image
   compression).
 
@@ -35,10 +34,10 @@ sudo ./scripts/setup-build-env.sh       # live-build, debhelper, Qt 6 dev, QEMU,
 sudo ./scripts/build-iso.sh             # -> build/out/
 ```
 
-`build-packages.sh` first runs `scripts/fetch-flathub-remote.sh`, which
-downloads Flathub's remote description and checks its signing key against
-the pinned fingerprint in `packages/zovelis-base/flathub.fingerprint` (the
-first download creates the pin; commit it).
+Flathub's remote description (its URL and signing key) is part of the
+source tree, with the key's fingerprint pinned in
+`packages/zovelis-base/flathub.fingerprint`. `scripts/fetch-flathub-remote.sh
+--refresh` downloads a new copy and refuses it if the key changed.
 
 `build-iso.sh` copies `live-build/` to `build/live/`, adds the packages and
 the boot-menu fonts, and runs `lb config` / `lb build`. Hooks inside the

@@ -4,9 +4,11 @@
 # zovelis-base, which installs it in /usr/share/flatpak/remotes.d/ so every
 # Zovelis OS system can install sandboxed apps from Flathub out of the box.
 #
-# The key is pinned: the first download records its fingerprint in
-# packages/zovelis-base/flathub.fingerprint (commit that file); later
-# downloads must match it, so a changed key never slips in unnoticed.
+# The key is pinned in packages/zovelis-base/flathub.fingerprint (Flathub's
+# key 6E5C05D979C76DAF93C081354184DD4D907A7CAE, checked against copies
+# shipped by other distributions); downloads must match it, so a changed key
+# never slips in unnoticed. The file in the source tree is used as it is
+# unless --refresh is given.
 set -eu
 cd "$(dirname "$0")/.."
 
@@ -40,7 +42,10 @@ if len(key) < 100:
 open(sys.argv[2], "wb").write(key)
 PY
 
-fingerprint=$(gpg --batch --with-colons --show-keys "$tmp/key.gpg" 2>/dev/null | awk -F: '/^fpr:/ {print $10; exit}')
+# GnuPG only reads the key here; give it a scratch home, not the user's.
+mkdir -m 0700 "$tmp/gnupg"
+fingerprint=$(GNUPGHOME=$tmp/gnupg gpg --batch --with-colons --show-keys "$tmp/key.gpg" 2>/dev/null |
+    awk -F: '/^fpr:/ {print $10; exit}')
 [ -n "$fingerprint" ] || { echo "fetch-flathub-remote: could not read the signing key" >&2; exit 1; }
 
 if [ -s "$PIN" ]; then

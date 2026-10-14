@@ -15,7 +15,7 @@ system, and an installation test (automated checks, manual clicks).
 | JSON/YAML, installer schemas | broken configuration (validated against Calamares' own schemas) |
 | desktop entries, XML | invalid launchers, polkit policies, AppStream metadata |
 | colour contrast | text that fails WCAG 2.x contrast (4.5:1 text, 3:1 indicators) in either theme |
-| consistency (`tests/check_consistency.py`) | settings that must agree across packages: boot loader names, installer steps and their order, packages removed vs. packages present, theme ids, required splash images, security defaults |
+| consistency (`tests/check_consistency.py`) | settings that must agree across packages: boot loader names, installer steps and their order, packages removed vs. packages present, theme ids, required splash images, security defaults, the Flathub key against its pinned fingerprint |
 | installer polkit rule | the live-only "no password" rule never applies outside the live system |
 | desktop layout script | the taskbar layout run against a stand-in for Plasma's scripting API |
 | installer helper scripts | input validation and cleanup rules, on fake target systems |
