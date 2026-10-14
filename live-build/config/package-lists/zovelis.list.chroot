@@ -66,9 +66,11 @@ exfatprogs
 dosfstools
 btrfs-progs
 xfsprogs
-# Virtual machines: clipboard sharing and screen resizing
+# Virtual machines: clipboard sharing, screen resizing, clean shutdown from
+# the host. Each one only runs inside its own kind of virtual machine.
 spice-vdagent
 open-vm-tools-desktop
+qemu-guest-agent
 
 # Settings, information, software and updates
 systemsettings
