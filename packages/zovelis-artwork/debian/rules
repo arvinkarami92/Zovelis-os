@@ -10,7 +10,7 @@ FONTDIR := debian/build/fonts
 # Noto Sans so the boot menu matches the desktop typography.
 override_dh_auto_build:
 	mkdir -p $(FONTDIR)
-	for size in 14 16 18; do \
+	set -e; for size in 14 16 18; do \
 	  grub-mkfont -s $$size -o $(FONTDIR)/noto-sans-regular-$$size.pf2 $(NOTO)/NotoSans-Regular.ttf; \
 	done
 	grub-mkfont -s 18 -o $(FONTDIR)/noto-sans-bold-18.pf2 $(NOTO)/NotoSans-Bold.ttf
