@@ -71,6 +71,24 @@ sudo -E ./scripts/build-iso.sh
 
 APT still verifies every package against Debian's signed release files.
 
+### Building on a Linux distribution other than Debian, without containers
+
+`scripts/dev/make-build-chroot.sh` creates a Debian 13 chroot in
+`/srv/zovelis-build` and runs the build scripts inside it:
+
+```sh
+sudo scripts/dev/make-build-chroot.sh create
+sudo scripts/dev/make-build-chroot.sh run ./scripts/build-packages.sh
+sudo scripts/dev/make-build-chroot.sh run ./scripts/build-iso.sh
+```
+
+It checks Debian's signed `Release` file, the package index and debootstrap
+before running anything. The keys come from the host's
+`debian-archive-keyring` package, or set `ZOVELIS_DEBIAN_KEYS` to the
+fingerprints (40 hex digits, no spaces) of Debian's archive signing keys
+published at <https://ftp-master.debian.org/keys.html>. `ZOVELIS_MIRROR` and
+`ZOVELIS_SECURITY_MIRROR` work as above.
+
 ## Changing things
 
 * **Artwork** is generated from code: edit `branding/generate.py` /

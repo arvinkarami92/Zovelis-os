@@ -4,7 +4,8 @@
 # need a built ISO: syntax and lint checks, cross-package consistency,
 # colour contrast, polkit rule and desktop layout tests, the Welcome app's
 # unit and UI tests, renders of the installer slideshow, the splash screen
-# and the login-screen fallback, and the installer helper script tests.
+# and the login-screen fallback, the installer helper script tests and the
+# trust checks of the build-chroot helper.
 #
 #   tests/run-static-checks.sh            (from the repository root)
 #
@@ -279,6 +280,7 @@ step "consistency" python3 tests/check_consistency.py
 step "installer polkit rule" check_polkit_rule
 step "desktop layout script" check_layout_script
 step "installer helper scripts" sh tests/installer/test-helper-scripts.sh
+step "build chroot trust chain" sh tests/dev/test-make-build-chroot.sh
 step "welcome app (build, unit, UI)" check_welcome_app
 step "qmllint" check_qmllint
 step "installer slideshow render" check_slideshow
