@@ -91,8 +91,17 @@ for module in exec_steps:
         check((cal / "modules" / f"{module}.conf").exists(), f"installer step {module} has a configuration")
 order = {m: i for i, m in enumerate(exec_steps)}
 check(order["packages"] < order["initramfs"], "live packages are removed before the initramfs is rebuilt")
-check(order["contextualprocess@before-bootloader"] < order["bootloader"] < order["contextualprocess@after-bootloader"],
-      "boot loader helpers run around the bootloader step")
+check(order["zovelisbootloader@prepare"] < order["grubcfg"] < order["bootloader"] < order["zovelisbootloader@finish"],
+      "boot loader helpers run around the bootloader step (prepare before grubcfg)")
+zmodule = PKG / "calamares-settings-zovelis/calamares/zovelis-modules/zovelisbootloader"
+zdesc = yaml.safe_load((zmodule / "module.desc").read_text())
+check(zdesc.get("name") == "zovelisbootloader" and zdesc.get("interface") == "python"
+      and (zmodule / zdesc.get("script", "")).is_file(), "zovelisbootloader module descriptor and script")
+check("/usr/share/calamares-settings-zovelis/modules" in settings.get("modules-search", []),
+      "Calamares searches the Zovelis module directory")
+zinstall = (PKG / "calamares-settings-zovelis/debian/calamares-settings-zovelis.install").read_text()
+check("usr/share/calamares-settings-zovelis/modules/zovelisbootloader/" in zinstall,
+      "the Zovelis module is installed where Calamares searches")
 check(order["unpackfs"] < order["machineid"] < order["users"], "system copied before machine-id and users")
 packages_conf = yaml.safe_load((cal / "modules/packages.conf").read_text())
 check(packages_conf.get("update_db") is False and packages_conf.get("update_system") is False,

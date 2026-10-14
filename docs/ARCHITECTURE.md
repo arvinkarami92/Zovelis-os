@@ -71,20 +71,25 @@ Install steps (`settings.conf`), with Zovelis-specific ones in bold:
 ```
 partition, mount, unpackfs (copy the live image), machineid, fstab, locale,
 keyboard, localecfg, luksbootkeyfile, users, displaymanager, networkcfg,
-hwclock, **before-bootloader**, grubcfg, bootloader, **after-bootloader**,
+hwclock, **zovelisbootloader@prepare**, grubcfg, bootloader, **zovelisbootloader@finish**,
 packages (remove live system and installer), plymouthcfg, initramfscfg,
 initramfs, **cleanup**, preservefiles (installer log), umount
 ```
 
-* **before-bootloader** (`prepare-bootloader`) installs `grub-efi-amd64`
-  or `grub-pc` from a copy kept in the image, offline, and records in
-  debconf where GRUB lives, so future GRUB updates reinstall it correctly.
-  (Both packages conflict, so neither can be preinstalled.)
+* **zovelisbootloader@prepare** (`prepare-bootloader`) installs
+  `grub-efi-amd64` or `grub-pc` from a copy kept in the image, offline, and
+  records in debconf where GRUB lives, so future GRUB updates reinstall it
+  correctly. (Both packages conflict, so neither can be preinstalled.)
+  `zovelisbootloader` is a small Python job module of our own: it reads the
+  boot disk from Calamares' global storage, which holds no value at all when
+  the user chose "Do not install a boot loader" (a shell-process step would
+  stop with "missing variables" there).
 * **bootloader** (Calamares) runs `grub-install` with the EFI directory
   `zovelis`; Debian's `grub-install` picks the signed shim/GRUB.
-* **after-bootloader** (`finish-bootloader`) also installs the boot loader
-  in the UEFI fallback path `EFI/BOOT/BOOTX64.EFI` (shim first, so it works
-  with Secure Boot too) and checks that a GRUB menu exists.
+* **zovelisbootloader@finish** (`finish-bootloader`) also installs the
+  boot loader in the UEFI fallback path `EFI/BOOT/BOOTX64.EFI` (shim first,
+  so it works with Secure Boot too), gives it the `grub.cfg` that Debian's
+  signed GRUB looks for next to itself, and checks that a GRUB menu exists.
 * **cleanup** (`cleanup-target`) refuses to finish if live-system packages,
   the installer, password-less sudo rules or the medium as APT source are
   left in the new system, and makes sure the firewall is on.
@@ -93,7 +98,11 @@ Why the EFI directory must be `zovelis`: GRUB package updates reinstall
 GRUB into `EFI/<first word of GRUB_DISTRIBUTOR, lower case>`.
 `GRUB_DISTRIBUTOR="Zovelis"` comes from `zovelis-base`; the installer's
 `bootloaderEntryName` and `efiBootloaderId` match it (checked by
-`tests/check_consistency.py`).
+`tests/check_consistency.py`). Debian's Secure Boot-signed GRUB has
+`/EFI/debian` built in as its prefix, but since GRUB 2.12 (Debian 13) it
+first reads `grub.cfg` from the directory it was started from, which
+`grub-install` fills for `EFI/zovelis` and `finish-bootloader` for
+`EFI/BOOT`.
 
 ## Software installation and updates
 

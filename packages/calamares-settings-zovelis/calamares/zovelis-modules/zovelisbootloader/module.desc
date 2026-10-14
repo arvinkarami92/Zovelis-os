@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Zovelis OS boot loader helpers (see main.py). Used through the instances
+# "zovelisbootloader@prepare" and "zovelisbootloader@finish" in settings.conf.
+---
+type:       "job"
+name:       "zovelisbootloader"
+interface:  "python"
+script:     "main.py"

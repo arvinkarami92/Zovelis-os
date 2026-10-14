@@ -92,8 +92,9 @@ check_calamares_schemas() {
     python3 - "$src/src/modules" <<'PY'
 import glob, sys, yaml, jsonschema
 ref = sys.argv[1]
-instance_of = {"before-bootloader": "contextualprocess", "after-bootloader": "contextualprocess",
-               "shellprocess-cleanup": "shellprocess"}
+# Configurations of module instances; zovelisbootloader-* belong to the
+# Zovelis module, which has no upstream schema.
+instance_of = {"shellprocess-cleanup": "shellprocess"}
 # Upstream schemas lag behind the code for these keys (verified in the
 # Calamares 3.3 sources: lists are accepted, autologinGroup is optional).
 known_outdated = {("users.conf", "'autologinGroup' is a required property"),
@@ -280,6 +281,7 @@ step "consistency" python3 tests/check_consistency.py
 step "installer polkit rule" check_polkit_rule
 step "desktop layout script" check_layout_script
 step "installer helper scripts" sh tests/installer/test-helper-scripts.sh
+step "installer boot loader job" python3 tests/installer/test_zovelisbootloader.py
 step "build chroot trust chain" sh tests/dev/test-make-build-chroot.sh
 step "welcome app (build, unit, UI)" check_welcome_app
 step "qmllint" check_qmllint

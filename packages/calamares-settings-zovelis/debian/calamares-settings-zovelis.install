@@ -1,6 +1,7 @@
 calamares/settings.conf etc/calamares/
 calamares/modules/*.conf etc/calamares/modules/
 calamares/branding/zovelis/* etc/calamares/branding/zovelis/
+calamares/zovelis-modules/zovelisbootloader/* usr/share/calamares-settings-zovelis/modules/zovelisbootloader/
 scripts/zovelis-install usr/bin/
 scripts/run-calamares usr/libexec/zovelis-installer/
 scripts/prepare-bootloader usr/libexec/zovelis-installer/
