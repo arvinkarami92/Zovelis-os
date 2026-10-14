@@ -6,7 +6,8 @@
 # system mounted at TARGET.
 #   * UEFI: also install the boot loader (with Secure Boot shim) in the
 #     fallback location EFI/BOOT, which firmware uses when its boot entries
-#     are lost (common in virtual machines and on some laptops).
+#     are lost (common in virtual machines and on some laptops), and give it
+#     the configuration it needs there (see below).
 #   * Both: check that a GRUB menu was generated.
 set -eu
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
@@ -30,13 +31,36 @@ mountpoint -q "$target" || die "$target is not a mount point"
 
 case "$firmware" in
     efi)
-        mountpoint -q "$target/boot/efi" || die "the EFI system partition is not mounted at $target/boot/efi"
+        esp=$target/boot/efi
+        mountpoint -q "$esp" || die "the EFI system partition is not mounted at $esp"
+        # The EFI system partition is FAT: names are not case-sensitive, and
+        # other systems may have created EFI/boot or efi/BOOT.
+        esp_find() {
+            find "$esp" -maxdepth 3 -ipath "$esp/$1" -type "$2" 2>/dev/null | head -n 1
+        }
         chroot "$target" grub-install --target=x86_64-efi --efi-directory=/boot/efi \
             --bootloader-id=zovelis --force-extra-removable --no-nvram --recheck
         for f in EFI/zovelis/grubx64.efi EFI/BOOT/BOOTX64.EFI; do
-            found=$(find "$target/boot/efi" -ipath "$target/boot/efi/$f" -type f 2>/dev/null | head -n 1)
-            [ -n "$found" ] || die "$f was not installed"
+            [ -n "$(esp_find "$f" f)" ] || die "$f was not installed"
         done
+        # With Secure Boot support, grub-install uses Debian's signed GRUB.
+        # Its search path is built in: grub.cfg next to itself first (for
+        # EFI/zovelis, grub-install writes that file), then EFI/debian. The
+        # copy in EFI/BOOT therefore needs the same grub.cfg next to it;
+        # without it, starting through the fallback path ends at a "grub>"
+        # prompt, or in another system's EFI/debian menu.
+        vendor_cfg=$(esp_find EFI/zovelis/grub.cfg f)
+        boot_dir=$(esp_find EFI/BOOT d)
+        if [ -n "$vendor_cfg" ]; then
+            cp "$vendor_cfg" "$boot_dir/grub.cfg.new"
+            mv -f "$boot_dir/grub.cfg.new" "$boot_dir/grub.cfg"
+            log "the fallback boot path uses the configuration of EFI/zovelis"
+        elif [ -e "$boot_dir/grub.cfg" ]; then
+            # GRUB was built for this computer (no Secure Boot packages) and
+            # needs no file there, but would read one left by another system.
+            rm -f "$boot_dir/grub.cfg"
+            log "removed an old grub.cfg from the fallback boot path"
+        fi
         ;;
     bios)
         if [ -z "$disk" ]; then

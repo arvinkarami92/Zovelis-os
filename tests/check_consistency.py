@@ -65,6 +65,11 @@ check(branding["strings"]["bootloaderEntryName"] == distributor,
       "installer bootloaderEntryName matches GRUB_DISTRIBUTOR")
 check(bootloader.get("installEFIFallback") is False,
       "Calamares' own EFI fallback copy is off (finish-bootloader installs it with shim)")
+finish_bootloader = (PKG / "calamares-settings-zovelis/scripts/finish-bootloader").read_text()
+efi_id = bootloader.get("efiBootloaderId")
+check(f"--bootloader-id={efi_id} " in finish_bootloader and f"EFI/{efi_id}/grub.cfg" in finish_bootloader,
+      "finish-bootloader uses the same EFI directory and gives EFI/BOOT its grub.cfg "
+      "(Debian's signed GRUB looks next to itself, then in EFI/debian)")
 check(grub.get("GRUB_DISABLE_OS_PROBER") == "false", "other operating systems are listed in the boot menu")
 
 # --- Installer -------------------------------------------------------------

@@ -78,6 +78,52 @@ printf 'set timeout=5\nmenuentry "Zovelis GNU/Linux" {\n}\n' > "$t1/boot/grub/gr
 expect 0 "finish-bootloader: BIOS with a GRUB menu" "$SCRIPTS/finish-bootloader" bios "$t1" /dev/sda
 expect 1 "finish-bootloader: UEFI needs the EFI partition mounted" "$SCRIPTS/finish-bootloader" efi "$t1"
 
+# UEFI: a stand-in for "chroot TARGET grub-install ..." (bind-mounted over
+# chroot in a private mount namespace) writes what grub-install writes:
+# with the Secure Boot packages shim + signed GRUB + EFI/zovelis/grub.cfg,
+# without them a GRUB image built for the computer and no grub.cfg.
+cat > "$tmp/fake-chroot" <<'EOF'
+#!/bin/sh
+target=$1
+shift
+[ "$1" = grub-install ] || exit 99
+esp=$target/boot/efi
+[ -e "$target/broken-grub" ] && exit 0
+mkdir -p "$esp/EFI/zovelis" "$esp/EFI/BOOT"
+if [ -e "$target/signed" ]; then
+    echo shim > "$esp/EFI/zovelis/shimx64.efi"
+    echo signed-grub > "$esp/EFI/zovelis/grubx64.efi"
+    printf "search.fs_uuid 0123 root\nset prefix=(\$root)'/boot/grub'\nconfigfile \$prefix/grub.cfg\n" > "$esp/EFI/zovelis/grub.cfg"
+    echo shim > "$esp/EFI/BOOT/BOOTX64.EFI"
+    echo signed-grub > "$esp/EFI/BOOT/grubx64.efi"
+else
+    echo core > "$esp/EFI/zovelis/grubx64.efi"
+    echo core > "$esp/EFI/BOOT/BOOTX64.EFI"
+fi
+EOF
+chmod 0755 "$tmp/fake-chroot"
+uefi_finish() {
+    unshare --mount sh -c "mount --bind '$tmp/fake-chroot' /usr/sbin/chroot && '$SCRIPTS/finish-bootloader' efi '$1'"
+}
+t3=$(make_target t3)
+mkdir -p "$t3/boot/efi"
+mount --bind "$t3/boot/efi" "$t3/boot/efi"
+printf 'menuentry "Zovelis GNU/Linux" {\n}\n' > "$t3/boot/grub/grub.cfg"
+: > "$t3/signed"
+expect 0 "finish-bootloader: UEFI with Secure Boot packages" uefi_finish "$t3"
+check "finish-bootloader: fallback path gets GRUB's settings" "cmp -s '$t3/boot/efi/EFI/zovelis/grub.cfg' '$t3/boot/efi/EFI/BOOT/grub.cfg'"
+check "finish-bootloader: no temporary file left" "[ ! -e '$t3/boot/efi/EFI/BOOT/grub.cfg.new' ]"
+rm "$t3/signed" "$t3/boot/efi/EFI/zovelis/grub.cfg" "$t3/boot/efi/EFI/zovelis/shimx64.efi" "$t3/boot/efi/EFI/BOOT/grubx64.efi"
+echo 'configfile (hd1,gpt2)/boot/grub/grub.cfg' > "$t3/boot/efi/EFI/BOOT/grub.cfg"
+expect 0 "finish-bootloader: UEFI without Secure Boot packages" uefi_finish "$t3"
+check "finish-bootloader: another system's grub.cfg removed from the fallback path" "[ ! -e '$t3/boot/efi/EFI/BOOT/grub.cfg' ]"
+t4=$(make_target t4)
+mkdir -p "$t4/boot/efi"
+mount --bind "$t4/boot/efi" "$t4/boot/efi"
+printf 'menuentry "Zovelis GNU/Linux" {\n}\n' > "$t4/boot/grub/grub.cfg"
+: > "$t4/broken-grub"
+expect 1 "finish-bootloader: UEFI fails when GRUB files are missing" uefi_finish "$t4"
+
 # --- cleanup-target -----------------------------------------------------------
 t2=$(make_target t2)
 echo 0123456789abcdef0123456789abcdef > "$t2/etc/machine-id"

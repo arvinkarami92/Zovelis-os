@@ -49,16 +49,24 @@ V=tests/vm/vmctl.py
 $V start --name install-uefi --firmware uefi --iso build/out/zovelis-os-1.0-amd64.iso --disk build/vm/uefi.qcow2
 # ... install with the GUI (screenshots: $V screenshot --name install-uefi out.png) ...
 $V stop --name install-uefi
-$V start --name installed-uefi --firmware uefi --disk build/vm/uefi.qcow2
-$V wait-agent --name installed-uefi
-$V exec --name installed-uefi --stdin -- /bin/sh -s installed < tests/vm/guest-checks.sh
+# Same name: the VM keeps the firmware settings (boot entries) the installer wrote.
+$V start --name install-uefi --firmware uefi --disk build/vm/uefi.qcow2
+$V wait-agent --name install-uefi
+$V exec --name install-uefi --stdin -- /bin/sh -s installed < tests/vm/guest-checks.sh
+$V stop --name install-uefi
+# Firmware that lost its boot entries starts EFI/BOOT/BOOTX64.EFI instead;
+# the system must start the same way from there.
+$V start --name install-uefi --firmware uefi --disk build/vm/uefi.qcow2 --reset-efivars
+$V wait-agent --name install-uefi
 ```
+
+Repeat with `--firmware uefi-secure` (Secure Boot on) and `--firmware bios`.
 
 The `installed` checks add: live system and installer gone, no password-less
 sudo, root locked, administrator in `sudo`, private home directories,
 initramfs without live hooks, Zovelis boot menu, installer log permissions,
-and for UEFI the shim, the fallback path, the firmware boot entry and the
-GRUB update settings (for BIOS: the GRUB install device).
+and for UEFI the shim, the fallback path and its GRUB settings, the firmware
+boot entry and the GRUB update settings (for BIOS: the GRUB install device).
 
 Manual checklist for each installation test:
 
@@ -67,6 +75,7 @@ Manual checklist for each installation test:
 - [ ] Encrypted install: GRUB asks for the passphrase once, the system boots
 - [ ] "Install alongside" keeps an existing system and lists it in the boot menu
 - [ ] After reboot: Zovelis boot menu, splash, login screen; login works
+- [ ] UEFI: with the firmware's boot entries reset, the system still starts (fallback path)
 - [ ] Welcome app opens; light/dark switch and text sizes apply immediately
 - [ ] Wi-Fi/ethernet connects; Firefox opens a web page
 - [ ] Discover lists updates; an update installs; a Flathub app installs, starts and is removed

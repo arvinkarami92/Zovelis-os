@@ -78,6 +78,11 @@ Findings fixed during development:
   passes the system palette to all controls.
 * Calamares' default would upload installation logs to a public pastebin on
   request; disabled.
+* On UEFI computers that lose their boot entries (several laptops, many
+  virtual machines), the fallback boot path would have stopped at a "grub>"
+  prompt: Debian's Secure Boot-signed GRUB reads `grub.cfg` from its own
+  directory or from `EFI/debian`, and grub-install only writes it to
+  `EFI/zovelis`. The installer now gives `EFI/BOOT` the same file.
 * An empty password could be accepted if weak passwords were allowed;
   passwords are now required to have at least 6 characters.
 

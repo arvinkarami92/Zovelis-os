@@ -131,6 +131,8 @@ if [ "$mode" = installed ]; then
         check "UEFI: GRUB installed in EFI/zovelis" test -f /boot/efi/EFI/zovelis/grubx64.efi
         check "UEFI: Secure Boot shim installed" test -f /boot/efi/EFI/zovelis/shimx64.efi
         check "UEFI: fallback boot path present" sh -c 'ls /boot/efi/EFI/BOOT/BOOTX64.EFI /boot/efi/EFI/boot/bootx64.efi 2>/dev/null | grep -q .'
+        # The FAT file system ignores case, so these paths match any spelling.
+        check "UEFI: fallback path has the same GRUB settings" cmp -s /boot/efi/EFI/zovelis/grub.cfg /boot/efi/EFI/BOOT/grub.cfg
         check "UEFI: firmware boot entry" sh -c 'efibootmgr | grep -qi zovelis'
         check "UEFI: GRUB package for updates" installed grub-efi-amd64
         check "UEFI: updates keep the fallback path" sh -c 'debconf-show grub-efi-amd64 | grep -q "force_efi_extra_removable: true"'
