@@ -41,11 +41,14 @@ mechanism.
 
 * No telemetry. KDE's opt-in user feedback stays off unless the user turns
   it on.
-* The installer contacts KDE's GeoIP service (`geoip.kde.org`) only to
-  suggest a time zone when online, and never uploads its log (the
-  pastebin feature is disabled).
+* The installer, when online, contacts KDE's GeoIP service
+  (`geoip.kde.org`) to suggest a time zone and checks once whether the
+  internet can be reached (`networkcheck.kde.org`, `deb.debian.org`) to
+  show it on its first page. It never uploads its log (the pastebin feature
+  is disabled).
 * File search indexes file names only, not document contents.
-* No network connectivity checks against third-party servers.
+* The installed system makes no connectivity checks against third-party
+  servers (NetworkManager's connectivity check stays off, as in Debian).
 
 ## Build-time integrity
 
