@@ -24,6 +24,14 @@ APT::Periodic::Unattended-Upgrade "1";
 CONF
 chmod 0644 /etc/apt/apt.conf.d/20auto-upgrades
 
+echo "I: Zovelis: Flathub ready from the first start"
+# Flatpak adds the remotes described in /usr/share/flatpak/remotes.d the
+# first time it opens the system installation as root. Do it now: Flathub is
+# then there before anything else runs, and a description Flatpak cannot
+# read (URL, signing key) stops the build here.
+flatpak remotes --system >/dev/null
+flatpak remotes --system --columns=name,url | grep -q '^flathub[[:space:]]*https://dl.flathub.org/repo/'
+
 echo "I: Zovelis: graphical start-up"
 systemctl set-default graphical.target
 
