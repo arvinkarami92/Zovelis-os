@@ -35,7 +35,12 @@ check "Breeze login screen present (used by the Zovelis one)" test -f /usr/share
 check "login screen can show Qt 6 themes" test -x /usr/bin/sddm-greeter-qt6
 check "Plasma (Wayland) session available" test -f /usr/share/wayland-sessions/plasma.desktop
 check "Zovelis boot splash is the default" sh -c 'plymouth-set-default-theme | grep -qx zovelis'
-check "welcome app starts" sh -c 'QT_QPA_PLATFORM=offscreen zovelis-welcome --version'
+check "welcome app finds all its libraries" sh -c 'ldd /usr/bin/zovelis-welcome >/dev/null && ! ldd /usr/bin/zovelis-welcome | grep -q "not found"'
+# Starting it needs Qt's "offscreen" platform plugin, which the desktop
+# itself does not need; run it only if some package brought the plugin in.
+if [ -e /usr/lib/x86_64-linux-gnu/qt6/plugins/platforms/libqoffscreen.so ]; then
+    check "welcome app starts" sh -c 'QT_QPA_PLATFORM=offscreen zovelis-welcome --version'
+fi
 check "installer configured" test -f /etc/calamares/branding/zovelis/branding.desc
 check "GRUB packages for the installer present" sh -c 'ls /usr/share/zovelis-installer/pool/bios/grub-pc_*.deb /usr/share/zovelis-installer/pool/efi/grub-efi-amd64_*.deb'
 check "web browser installed" installed firefox-esr

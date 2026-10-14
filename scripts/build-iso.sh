@@ -43,6 +43,8 @@ if [ -d "$ROOT/build/lb-cache.keep" ]; then
 fi
 
 # 2. Our packages, installed into the image from a local repository.
+#    (Git does not keep empty directories, so create it here.)
+mkdir -p "$WORK/config/packages.chroot"
 cp "$DEBS"/*.deb "$WORK/config/packages.chroot/"
 
 # 3. Fonts for the Zovelis boot menu (GRUB can only use its own bitmap
@@ -55,10 +57,10 @@ for spec in regular-16:NotoSans-Regular regular-20:NotoSans-Regular bold-20:Noto
         "$NOTO/${spec#*:}.ttf"
 done
 
-# 4. Build.
+# 4. Build. (auto/build writes build.log and fails when no image was made.)
 cd "$WORK"
 lb config
-lb build 2>&1 | tee build.log
+lb build || die "live-build failed; see $WORK/build.log"
 iso=$(ls ./*.iso 2>/dev/null | head -n 1)
 [ -n "$iso" ] || die "live-build did not produce an ISO; see $WORK/build.log"
 
