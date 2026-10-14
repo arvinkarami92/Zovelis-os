@@ -11,7 +11,7 @@ VERSION=${ZOVELIS_VERSION:-1.0}
 lb config noauto \
     --mode debian \
     --distribution trixie \
-    --architectures amd64 \
+    --architecture amd64 \
     --archive-areas "main contrib non-free-firmware" \
     --mirror-bootstrap "$MIRROR" \
     --mirror-chroot "$MIRROR" \
@@ -30,8 +30,7 @@ lb config noauto \
     --bootloaders "syslinux,grub-efi" \
     --uefi-secure-boot enable \
     --memtest memtest86+ \
-    --win32-loader false \
-    --binary-images iso-hybrid \
+    --binary-image iso-hybrid \
     --chroot-squashfs-compression-type zstd \
     --iso-application "Zovelis OS $VERSION" \
     --iso-publisher "Zovelis OS Developers" \
