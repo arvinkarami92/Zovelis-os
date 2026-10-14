@@ -60,11 +60,17 @@ check "nothing was written by rejected calls" "[ -z \"\$(ls -A '$conf')\" ]"
 expect 0 "auto-updates on" $asroot "$tmp/helper" auto-updates on
 check "unattended upgrades enabled" "grep -q '^APT::Periodic::Unattended-Upgrade \"1\";\$' '$conf/20auto-upgrades'"
 check "package lists refresh enabled" "grep -q '^APT::Periodic::Update-Package-Lists \"1\";\$' '$conf/20auto-upgrades'"
+printf 'APT::Periodic::Update-Package-Lists "1";\nAPT::Periodic::Unattended-Upgrade "1";\n' > "$tmp/enabled"
+check "same file as the package's enabled version" "cmp -s '$tmp/enabled' '$conf/20auto-upgrades'"
 check "file mode is 0644" "[ \"\$(stat -c %a '$conf/20auto-upgrades')\" = 644 ]"
 check "no temporary files left behind" "[ \"\$(ls -A '$conf')\" = 20auto-upgrades ]"
 
 expect 0 "auto-updates off" $asroot "$tmp/helper" auto-updates off
 check "unattended upgrades disabled" "grep -q '^APT::Periodic::Unattended-Upgrade \"0\";\$' '$conf/20auto-upgrades'"
+# Byte for byte what the unattended-upgrades package ships, so that ucf never
+# reports the file as changed by the administrator.
+printf 'APT::Periodic::Update-Package-Lists "0";\nAPT::Periodic::Unattended-Upgrade "0";\n' > "$tmp/disabled"
+check "same file as the package's disabled version" "cmp -s '$tmp/disabled' '$conf/20auto-upgrades'"
 
 # A symlink planted at the target must be replaced, never followed.
 rm -f "$conf/20auto-upgrades"

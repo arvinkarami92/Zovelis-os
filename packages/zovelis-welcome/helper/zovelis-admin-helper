@@ -44,11 +44,13 @@ esac
 # half-written file.
 tmp=$(mktemp "$(dirname "$APT_CONF_DIR")/.zovelis-$TARGET_NAME.XXXXXX") || fail "cannot create a temporary file" 4
 trap 'rm -f "$tmp"' EXIT HUP INT TERM
+# Exactly the two versions the unattended-upgrades package installs itself
+# (/usr/share/unattended-upgrades/20auto-upgrades and 20auto-upgrades-disabled),
+# so that its upgrades find a known file and never ask about local changes.
+# With "off", Discover still refreshes the package lists once a day for its
+# update notifications.
 cat > "$tmp" <<CONF
-// Managed by Zovelis OS. Change it with the Welcome app or this helper:
-//   pkexec /usr/libexec/zovelis/zovelis-admin-helper auto-updates on|off
-// Package lists are refreshed daily either way, so update notifications work.
-APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Update-Package-Lists "$value";
 APT::Periodic::Unattended-Upgrade "$value";
 CONF
 chmod 0644 "$tmp"
