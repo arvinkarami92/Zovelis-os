@@ -63,7 +63,7 @@ Recommends:
          okular,
          partitionmanager,
          plasma-systemmonitor,
-         spectacle,
+         kde-spectacle,
 # Accessibility
          orca,
 # Printing

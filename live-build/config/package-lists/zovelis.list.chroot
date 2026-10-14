@@ -43,7 +43,7 @@ fonts-noto-core
 fonts-noto-ui-core
 fonts-noto-mono
 fonts-noto-color-emoji
-fonts-liberation2
+fonts-liberation
 fonts-hack
 
 # Hardware: network, Bluetooth, sound, power, displays, storage
@@ -81,7 +81,7 @@ plasma-discover-backend-fwupd
 packagekit
 fwupd
 flatpak
-flatpak-kcm
+kde-config-flatpak
 plasma-firewall
 ufw
 unattended-upgrades
@@ -98,7 +98,7 @@ kwrite
 ark
 gwenview
 okular
-spectacle
+kde-spectacle
 kcalc
 elisa
 haruna
@@ -133,7 +133,7 @@ wget
 ca-certificates
 zip
 unzip
-p7zip-full
+7zip
 file
 pciutils
 usbutils
