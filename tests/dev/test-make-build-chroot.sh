@@ -21,6 +21,10 @@ if [ "$(id -u)" -ne 0 ]; then
     echo "SKIP: needs root"
     exit 0
 fi
+if ! unshare --mount sh -c 'mount -t tmpfs none /mnt' 2>/dev/null; then
+    echo "SKIP: mounting is not permitted here (run as root on a host or in a privileged container)"
+    exit 0
+fi
 
 tmp=$(mktemp -d)
 server=
@@ -35,7 +39,7 @@ mkdir -m 0700 "$GNUPGHOME"
 gpg --batch --quiet --passphrase '' --quick-gen-key 'Test Archive <archive@example.invalid>' ed25519 sign never 2>/dev/null
 gpg --batch --quiet --passphrase '' --quick-gen-key 'Someone Else <other@example.invalid>' ed25519 sign never 2>/dev/null
 fpr_of() {
-    gpg --batch --with-colons --list-keys "$1" | awk -F: '$1 == "fpr" { print $10; exit }'
+    gpg --batch --no-auto-check-trustdb --with-colons --list-keys "$1" 2>/dev/null | awk -F: '$1 == "fpr" { print $10; exit }'
 }
 ARCHIVE_KEY=$(fpr_of archive@example.invalid)
 OTHER_KEY=$(fpr_of other@example.invalid)

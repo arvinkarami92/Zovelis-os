@@ -14,6 +14,11 @@ if [ "$(id -u)" -ne 0 ] || ! command -v unshare >/dev/null 2>&1; then
     echo "SKIP: needs root and unshare"
     exit 0
 fi
+# Containers without CAP_SYS_ADMIN cannot mount anything.
+if ! unshare --mount sh -c 'mount -t tmpfs none /mnt' 2>/dev/null; then
+    echo "SKIP: mounting is not permitted here (run as root on a host or in a privileged container)"
+    exit 0
+fi
 
 tmp=$(mktemp -d)
 cleanup() {

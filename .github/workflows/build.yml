@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Build the Zovelis OS packages and ISO, then boot the ISO in QEMU/KVM
-# (BIOS and UEFI) and check the live system from the inside.
+# (BIOS, UEFI, UEFI with Secure Boot) and check the live system from the
+# inside.
 name: build
 
 on:
@@ -12,7 +13,11 @@ on:
 jobs:
   checks:
     runs-on: ubuntu-24.04
-    container: debian:trixie
+    container:
+      image: debian:trixie
+      # The installer helper and build-chroot tests use bind mounts and
+      # private mount namespaces, which need CAP_SYS_ADMIN.
+      options: --privileged
     steps:
       - uses: actions/checkout@v4
       - name: Build tools
@@ -37,16 +42,22 @@ jobs:
           df -h /
       - name: Build packages and ISO (Debian 13 container)
         run: ./scripts/build-in-container.sh all
+      - name: Hand the build results to the runner's user
+        # The container build runs as root; the tests below write into build/.
+        run: |
+          sudo mkdir -p build/vm build/vm-results
+          sudo chown "$(id -u):$(id -g)" build build/vm build/vm-results
+          sudo chown -R "$(id -u):$(id -g)" build/out
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-      - name: Boot tests (BIOS, UEFI)
+      - name: Boot tests (BIOS, UEFI, UEFI with Secure Boot)
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends qemu-system-x86 qemu-utils ovmf
-          ./tests/vm/run-vm-tests.sh build/out/zovelis-os-*-amd64.iso bios uefi
+          ./tests/vm/run-vm-tests.sh build/out/zovelis-os-*-amd64.iso bios uefi uefi-secure
       - uses: actions/upload-artifact@v4
         if: always()
         with:
