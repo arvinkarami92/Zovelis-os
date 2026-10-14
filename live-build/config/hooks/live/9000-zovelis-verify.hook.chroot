@@ -1,0 +1,49 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Stop the build if the image does not have the Zovelis OS defaults. Each
+# check corresponds to a requirement of the project brief.
+set -eu
+
+failures=0
+check() {
+    description=$1
+    shift
+    if "$@" >/dev/null 2>&1; then
+        echo "I: Zovelis check ok: $description"
+    else
+        echo "E: Zovelis check FAILED: $description"
+        failures=$((failures + 1))
+    fi
+}
+installed() {
+    [ "$(dpkg-query -W -f '${db:Status-Status}' "$1" 2>/dev/null)" = installed ]
+}
+
+check "os-release names Zovelis OS" grep -qx 'ID=zovelis' /etc/os-release
+check "Debian's os-release is kept as a diversion" test -f /usr/lib/os-release.debian
+check "firewall enabled at boot" grep -qx 'ENABLED=yes' /etc/ufw/ufw.conf
+check "automatic security updates enabled" grep -q 'Unattended-Upgrade "1"' /etc/apt/apt.conf.d/20auto-upgrades
+check "AppArmor installed" installed apparmor
+check "Flatpak installed" installed flatpak
+check "Flathub preconfigured" test -s /usr/share/flatpak/remotes.d/flathub.flatpakrepo
+check "Zovelis global themes installed" test -f /usr/share/plasma/look-and-feel/org.zovelis.light.desktop/contents/defaults
+check "Zovelis global theme is the default" grep -qx 'LookAndFeelPackage=org.zovelis.light.desktop' /etc/xdg/kdeglobals
+check "Zovelis login screen selected" grep -qx 'Current=zovelis' /etc/sddm.conf.d/10-zovelis.conf
+check "Breeze login screen present (used by the Zovelis one)" test -f /usr/share/sddm/themes/breeze/Main.qml
+check "Zovelis boot splash is the default" sh -c 'plymouth-set-default-theme | grep -qx zovelis'
+check "welcome app starts" sh -c 'QT_QPA_PLATFORM=offscreen zovelis-welcome --version'
+check "installer configured" test -f /etc/calamares/branding/zovelis/branding.desc
+check "GRUB packages for the installer present" sh -c 'ls /usr/share/zovelis-installer/pool/bios/grub-pc_*.deb /usr/share/zovelis-installer/pool/efi/grub-efi-amd64_*.deb'
+check "web browser installed" installed firefox-esr
+check "file manager installed" installed dolphin
+check "terminal installed" installed konsole
+check "settings app installed" installed systemsettings
+check "software center installed" installed plasma-discover
+check "no SSH server" sh -c '! dpkg-query -W -f "\${db:Status-Status}" openssh-server 2>/dev/null | grep -q installed'
+check "no password-less sudo rules" sh -c '! grep -rEqs "^[^#]*NOPASSWD" /etc/sudoers /etc/sudoers.d'
+check "machine-id is empty" sh -c '[ ! -s /etc/machine-id ]'
+
+if [ "$failures" -ne 0 ]; then
+    echo "E: Zovelis: $failures check(s) failed"
+    exit 1
+fi

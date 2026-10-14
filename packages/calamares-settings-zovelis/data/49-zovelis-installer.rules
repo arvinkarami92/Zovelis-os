@@ -1,0 +1,21 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// On the Zovelis OS live system (started from a USB stick or DVD), the
+// person at the computer may start the installer without a password, as on
+// any live system. Everywhere else this rule does nothing:
+//   * it only applies to local, active sessions, and
+//   * only while the system runs from live media (/run/live/medium exists).
+// The installer removes this package from the installed system anyway.
+polkit.addRule(function (action, subject) {
+    if (action.id !== "org.zovelis.installer.run") {
+        return polkit.Result.NOT_HANDLED;
+    }
+    if (!subject.local || !subject.active) {
+        return polkit.Result.NOT_HANDLED;
+    }
+    try {
+        polkit.spawn(["/usr/bin/test", "-d", "/run/live/medium"]);
+    } catch (error) {
+        return polkit.Result.NOT_HANDLED;
+    }
+    return polkit.Result.YES;
+});

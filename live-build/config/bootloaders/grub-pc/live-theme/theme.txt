@@ -1,0 +1,48 @@
+# Zovelis OS boot menu theme (live medium).
+desktop-image: "../splash.png"
+desktop-color: "#071726"
+title-text: ""
+message-font: "Noto Sans Regular 16"
+message-color: "#e8edf2"
+terminal-font: "Unifont Regular 16"
+
++ boot_menu {
+	left = 25%
+	width = 50%
+	top = 42%
+	height = 36%
+	item_font = "Noto Sans Regular 20"
+	item_color = "#c8d3dc"
+	selected_item_font = "Noto Sans Bold 20"
+	selected_item_color = "#ffffff"
+	item_height = 40
+	item_padding = 12
+	item_spacing = 6
+	icon_width = 0
+	icon_height = 0
+	item_icon_space = 0
+	scrollbar = false
+}
+
++ label {
+	id = "__timeout__"
+	left = 0
+	top = 82%
+	width = 100%
+	height = 24
+	align = "center"
+	color = "#9aa7b3"
+	font = "Noto Sans Regular 16"
+	text = "Starting automatically in %d seconds"
+}
+
++ label {
+	left = 0
+	top = 100%-48
+	width = 100%
+	height = 24
+	align = "center"
+	color = "#7d8b97"
+	font = "Noto Sans Regular 16"
+	text = "Arrow keys: choose   Enter: start   E: edit   C: command line"
+}

@@ -1,0 +1,45 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Zovelis OS: system defaults applied while building the image. Runs inside
+# the image (chroot) after all packages are installed.
+set -eu
+export DEBIAN_FRONTEND=noninteractive
+
+echo "I: Zovelis: firewall on at boot"
+# ufw keeps the switch in its debconf answer and in /etc/ufw/ufw.conf.
+# Nothing is loaded into the kernel here (that would change the firewall of
+# the machine building the image); ufw.service loads the rules at boot.
+echo "ufw ufw/enable boolean true" | debconf-set-selections
+sed -i 's/^ENABLED=.*/ENABLED=yes/' /etc/ufw/ufw.conf
+grep -q '^ENABLED=yes$' /etc/ufw/ufw.conf
+systemctl enable ufw.service
+
+echo "I: Zovelis: automatic security updates on"
+echo "unattended-upgrades unattended-upgrades/enable_auto_updates boolean true" | debconf-set-selections
+dpkg-reconfigure -f noninteractive unattended-upgrades
+grep -Eq '^APT::Periodic::Unattended-Upgrade "1";' /etc/apt/apt.conf.d/20auto-upgrades
+
+echo "I: Zovelis: graphical start-up"
+systemctl set-default graphical.target
+
+echo "I: Zovelis: no unneeded background services"
+# None of these are installed by default; if a dependency ever pulls one in,
+# keep it from running at every boot. Users can still enable them.
+for unit in ModemManager.service cups-browsed.service smartmontools.service \
+    kerneloops.service ssh.service exim4.service; do
+    if systemctl list-unit-files "$unit" >/dev/null 2>&1 &&
+        systemctl list-unit-files "$unit" | grep -q "^$unit"; then
+        systemctl disable "$unit" || true
+    fi
+done
+
+echo "I: Zovelis: English (US) for the live system"
+# The installer generates and sets the language chosen by the user.
+sed -i 's/^# *\(en_US.UTF-8 UTF-8\)/\1/' /etc/locale.gen
+locale-gen
+update-locale LANG=en_US.UTF-8
+
+echo "I: Zovelis: nothing machine-specific in the image"
+: > /etc/machine-id
+rm -f /var/lib/dbus/machine-id /var/lib/systemd/random-seed
+rm -f /etc/ssh/ssh_host_*

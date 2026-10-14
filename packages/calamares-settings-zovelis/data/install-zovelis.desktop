@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Install Zovelis OS
+GenericName=System Installer
+Comment=Install Zovelis OS on this computer
+Exec=zovelis-install
+Icon=zovelis-installer
+Terminal=false
+StartupNotify=true
+Categories=System;
+Keywords=install;installer;setup;calamares;zovelis;

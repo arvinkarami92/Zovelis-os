@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Installer desktop icon
+Comment=Adds the "Install Zovelis OS" icon to the desktop of the live system
+Exec=/usr/libexec/zovelis-installer/add-desktop-icon
+NoDisplay=true
+Terminal=false
+OnlyShowIn=KDE;
+X-KDE-autostart-phase=1

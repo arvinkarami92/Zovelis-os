@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Boot loader files for both firmware types and Secure Boot. The installer
+# adds grub-pc or grub-efi-amd64 (from the medium) to the installed system.
+grub-common
+grub2-common
+grub-pc-bin
+grub-efi-amd64-bin
+grub-efi-amd64-signed
+shim-signed
+efibootmgr
+mokutil
+os-prober
+cryptsetup
+cryptsetup-initramfs

@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Firmware and CPU microcode for common hardware (Debian non-free-firmware),
+# so Wi-Fi, Bluetooth, graphics and sound work out of the box.
+firmware-linux-free
+firmware-misc-nonfree
+firmware-amd-graphics
+firmware-intel-graphics
+firmware-iwlwifi
+firmware-realtek
+firmware-atheros
+firmware-brcm80211
+firmware-mediatek
+firmware-intel-sound
+firmware-sof-signed
+bluez-firmware
+intel-microcode
+amd64-microcode

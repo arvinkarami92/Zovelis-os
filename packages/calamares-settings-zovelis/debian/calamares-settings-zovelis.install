@@ -1,0 +1,13 @@
+calamares/settings.conf etc/calamares/
+calamares/modules/*.conf etc/calamares/modules/
+calamares/branding/zovelis/* etc/calamares/branding/zovelis/
+scripts/zovelis-install usr/bin/
+scripts/run-calamares usr/libexec/zovelis-installer/
+scripts/prepare-bootloader usr/libexec/zovelis-installer/
+scripts/finish-bootloader usr/libexec/zovelis-installer/
+scripts/cleanup-target usr/libexec/zovelis-installer/
+scripts/add-desktop-icon usr/libexec/zovelis-installer/
+data/install-zovelis.desktop usr/share/applications/
+data/zovelis-installer-desktop-icon.desktop etc/xdg/autostart/
+data/org.zovelis.installer.policy usr/share/polkit-1/actions/
+data/49-zovelis-installer.rules usr/share/polkit-1/rules.d/

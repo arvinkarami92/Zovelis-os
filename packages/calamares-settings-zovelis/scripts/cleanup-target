@@ -1,0 +1,70 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# cleanup-target TARGET
+#
+# Last step of the Zovelis OS installer: make sure nothing that belongs to
+# the live system or to the installer is left in the new system, and that
+# the security defaults are in place. Problems that would make the new
+# system insecure or unbootable stop the installation with an error.
+set -eu
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+export PATH
+export LC_ALL=C.UTF-8
+
+log() { echo "cleanup-target: $*" >&2; }
+die() { log "ERROR: $*"; exit 1; }
+
+[ "$#" -eq 1 ] || die "usage: cleanup-target TARGET"
+target=$1
+case "$target" in
+    /*) ;;
+    *) die "the target must be an absolute path (got '$target')" ;;
+esac
+[ "$target" != / ] || die "refusing to work on the running system"
+mountpoint -q "$target" || die "$target is not a mount point"
+
+# 1. Live-system packages and the installer must be gone (live-boot would
+#    try to boot the installed system as a live system).
+for package in live-boot live-boot-initramfs-tools live-config live-config-systemd live-tools \
+    calamares calamares-settings-zovelis; do
+    status=$(chroot "$target" dpkg-query -W -f '${db:Status-Status}' "$package" 2>/dev/null || true)
+    case "$status" in
+        "" | not-installed | config-files) ;;
+        *) die "$package is still installed in the new system ($status)" ;;
+    esac
+done
+
+# 2. No password-less administrator access (that only exists on the live
+#    system, but check anyway).
+for file in "$target"/etc/sudoers "$target"/etc/sudoers.d/*; do
+    [ -f "$file" ] || continue
+    if grep -Eq '^[^#]*NOPASSWD' "$file"; then
+        die "$file allows sudo without a password"
+    fi
+done
+if [ -e "$target/usr/share/polkit-1/rules.d/49-zovelis-installer.rules" ]; then
+    die "the installer's polkit rule is still present"
+fi
+
+# 3. Package sources must point to the internet mirrors, not the medium.
+if grep -rqs 'live/medium\|cdrom:' "$target/etc/apt/sources.list" "$target"/etc/apt/sources.list.d/; then
+    die "APT still uses the installation medium as a package source"
+fi
+
+# 4. Identity and randomness that must be unique to this computer.
+[ -s "$target/etc/machine-id" ] || die "/etc/machine-id was not created"
+if [ -f "$target/var/lib/systemd/random-seed" ]; then
+    chmod 0600 "$target/var/lib/systemd/random-seed"
+fi
+
+# 5. Security defaults: firewall on at boot.
+if [ -f "$target/etc/ufw/ufw.conf" ] && ! grep -q '^ENABLED=yes' "$target/etc/ufw/ufw.conf"; then
+    log "switching the firewall on"
+    sed -i 's/^ENABLED=.*/ENABLED=yes/' "$target/etc/ufw/ufw.conf"
+fi
+
+# 6. Leftovers of the boot loader step: the GRUB packages copied from the
+#    medium (now installed properly) and their staging directory.
+rm -rf "$target/usr/share/zovelis-installer" "$target"/tmp/zovelis-grub.*
+
+log "done"

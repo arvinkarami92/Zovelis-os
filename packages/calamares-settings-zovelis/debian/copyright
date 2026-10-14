@@ -1,0 +1,22 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: calamares-settings-zovelis
+
+Files: *
+Copyright: 2026 Zovelis OS Developers
+License: GPL-3+
+
+Files: calamares/branding/zovelis/*.png
+Copyright: 2026 Zovelis OS Developers
+License: CC-BY-SA-4.0
+ This work is licensed under the Creative Commons Attribution-ShareAlike 4.0
+ International License. On Debian systems the full text can be found in
+ /usr/share/common-licenses/CC-BY-SA-4.0.
+
+License: GPL-3+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ version 3 can be found in /usr/share/common-licenses/GPL-3.

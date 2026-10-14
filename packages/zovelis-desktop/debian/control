@@ -1,0 +1,79 @@
+Source: zovelis-desktop
+Section: metapackages
+Priority: optional
+Maintainer: Zovelis OS Developers <maintainers@zovelis.invalid>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: zovelis-desktop
+Architecture: all
+Multi-Arch: foreign
+Depends: ${misc:Depends},
+# Zovelis OS itself
+         zovelis-artwork (>= 1.0),
+         zovelis-base (>= 1.0),
+         zovelis-desktop-settings (>= 1.0),
+         zovelis-welcome (>= 1.0),
+# Plasma desktop, sessions and login
+         kwin-wayland,
+         kwin-x11,
+         plasma-desktop,
+         plasma-workspace,
+         polkit-kde-agent-1,
+         sddm,
+         sddm-theme-breeze,
+         xserver-xorg,
+         xwayland,
+# Look and integration
+         breeze,
+         breeze-gtk-theme,
+         kde-config-gtk-style,
+         plasma-integration,
+         qml6-module-org-kde-qqc2desktopstyle,
+         xdg-desktop-portal-kde,
+# Hardware: displays, power, network, Bluetooth, sound, storage
+         bluedevil,
+         kscreen,
+         network-manager,
+         pipewire-audio,
+         plasma-nm,
+         plasma-pa,
+         powerdevil,
+         udisks2,
+         upower,
+# Settings, software and security
+         flatpak,
+         kde-config-sddm,
+         kinfocenter,
+         plasma-discover,
+         plasma-firewall,
+         systemsettings,
+Recommends:
+# Everyday applications (each can be removed on its own)
+         ark,
+         dolphin,
+         elisa,
+         firefox-esr,
+         gwenview,
+         haruna,
+         kcalc,
+         konsole,
+         kwrite,
+         okular,
+         partitionmanager,
+         plasma-systemmonitor,
+         spectacle,
+# Accessibility
+         orca,
+# Printing
+         print-manager,
+Description: Zovelis OS desktop (metapackage)
+ This metapackage installs the complete Zovelis OS desktop: KDE Plasma with
+ the Zovelis look, the login screen, hardware support tools, the Software
+ Center (Discover) with Flatpak, the firewall settings and the Welcome app.
+ .
+ The everyday applications (web browser, file manager, terminal, text
+ editor, viewers, media players, calculator, screenshot tool, screen
+ reader) are recommended rather than required, so any of them can be
+ removed without removing the rest of the desktop.

@@ -1,0 +1,52 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Zovelis OS branding for the Calamares installer.
+---
+componentName: zovelis
+
+welcomeStyleCalamares: false
+welcomeExpandingLogo: true
+
+# Fits on 1024x768 screens with a taskbar; can be resized and maximized.
+windowExpanding: normal
+windowSize: 960px,640px
+windowPlacement: center
+
+sidebar: widget
+navigation: widget
+
+strings:
+  productName:         "Zovelis OS"
+  shortProductName:    "Zovelis"
+  version:             "1.0"
+  shortVersion:        "1.0"
+  versionedName:       "Zovelis OS 1.0"
+  shortVersionedName:  "Zovelis 1.0"
+  # Shown in the boot menu ("Zovelis GNU/Linux") and used, in lower case, as
+  # the EFI directory name.
+  bootloaderEntryName: "Zovelis"
+  # No public web site yet: empty links hide the corresponding buttons.
+  productUrl:          ""
+  supportUrl:          ""
+  knownIssuesUrl:      ""
+  releaseNotesUrl:     ""
+  donateUrl:           ""
+
+images:
+  productIcon:    "zovelis-icon.png"
+  productLogo:    "zovelis-logo.png"
+  productWelcome: "zovelis-welcome.png"
+
+slideshow:    "show.qml"
+slideshowAPI: 2
+
+style:
+  SidebarBackground:        "#071726"
+  SidebarText:              "#FFFFFF"
+  SidebarTextCurrent:       "#071726"
+  SidebarBackgroundCurrent: "#5FD8DB"
+
+# Never send the installation log to a public paste service.
+uploadServer:
+  type:      "none"
+  url:       ""
+  sizeLimit: 0

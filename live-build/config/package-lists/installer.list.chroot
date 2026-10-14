@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Live system and installer. The installer removes these packages from the
+# system it installs (see calamares/modules/packages.conf).
+live-boot
+live-config
+live-config-systemd
+live-tools
+calamares
+calamares-settings-zovelis
+rsync
+squashfs-tools

@@ -1,0 +1,43 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# run-calamares — runs the installer as root. Started by zovelis-install
+# through pkexec, which keeps DISPLAY and XAUTHORITY (polkit action
+# org.zovelis.installer.run allows GUI programs) and the locale variables.
+# Takes no arguments: nothing the calling user passes reaches Calamares.
+set -eu
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+export PATH
+
+if [ "$(id -u)" -ne 0 ]; then
+    echo "run-calamares: start the installer with zovelis-install" >&2
+    exit 1
+fi
+if [ ! -d /run/live/medium ]; then
+    echo "run-calamares: this is not a Zovelis OS live system" >&2
+    exit 1
+fi
+if [ -z "${DISPLAY:-}" ]; then
+    echo "run-calamares: no display" >&2
+    exit 1
+fi
+
+# A private runtime directory for root's Qt/KDE libraries.
+XDG_RUNTIME_DIR=$(mktemp -d /tmp/zovelis-installer-runtime.XXXXXX)
+chmod 0700 "$XDG_RUNTIME_DIR"
+trap 'rm -rf "$XDG_RUNTIME_DIR"' EXIT HUP INT TERM
+export XDG_RUNTIME_DIR
+
+# Draw through X11/XWayland (root must not use the user's Wayland socket),
+# with the Plasma look so the installer matches the desktop.
+export QT_QPA_PLATFORM=xcb
+export XDG_CURRENT_DESKTOP=KDE
+export KDE_FULL_SESSION=true
+export KDE_SESSION_VERSION=6
+# Package scripts run by the installer must never wait for input.
+export DEBIAN_FRONTEND=noninteractive
+export HOME=/root
+
+cd /
+status=0
+calamares || status=$?
+exit "$status"

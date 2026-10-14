@@ -1,0 +1,41 @@
+Source: calamares-settings-zovelis
+Section: admin
+Priority: optional
+Maintainer: Zovelis OS Developers <maintainers@zovelis.invalid>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: calamares-settings-zovelis
+Architecture: all
+Depends: ${misc:Depends},
+         calamares (>= 3.3),
+         cryptsetup,
+         dosfstools,
+         e2fsprogs,
+         efibootmgr,
+         grub-common,
+         os-prober,
+         pkexec,
+         polkitd,
+         procps,
+         rsync,
+         squashfs-tools,
+         util-linux,
+         xdg-user-dirs,
+Recommends: btrfs-progs,
+            kdialog,
+            xfsprogs,
+Conflicts: calamares-settings-debian,
+Description: Zovelis OS installer configuration
+ Configuration, branding and helper scripts that turn the Calamares
+ installer into the Zovelis OS installer:
+  * a short guided installation (language, time zone, keyboard, disk,
+    user account) with optional full-disk encryption,
+  * GRUB with Secure Boot support on UEFI and on BIOS computers, installed
+    from the installation medium without needing the internet,
+  * removal of the live-system tools from the installed system,
+  * the "Install Zovelis OS" launcher on the live desktop.
+ .
+ This package is only useful on the Zovelis OS live system; the installer
+ removes it from the system it installs.

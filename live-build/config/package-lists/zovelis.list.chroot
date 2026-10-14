@@ -1,0 +1,141 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Zovelis OS desktop. The image is built without "Recommends", so every
+# package the system needs is listed here (or pulled in as a dependency).
+# All of these are marked "manually installed" in the image, so removing one
+# application later never removes others.
+
+# Zovelis OS packages (built from packages/ in this source tree)
+zovelis-base
+zovelis-artwork
+zovelis-desktop-settings
+zovelis-desktop
+zovelis-welcome
+
+# Plasma desktop, sessions, login screen
+plasma-desktop
+plasma-workspace
+kwin-wayland
+kwin-x11
+xwayland
+xserver-xorg
+sddm
+sddm-theme-breeze
+kde-config-sddm
+polkit-kde-agent-1
+kscreen
+kde-config-screenlocker
+plasma-integration
+qml6-module-org-kde-qqc2desktopstyle
+xdg-desktop-portal-kde
+xdg-user-dirs
+xdg-utils
+kde-cli-tools
+kdialog
+kmenuedit
+
+# Look: Breeze styles, icons, cursors, GTK integration, fonts
+breeze
+breeze-gtk-theme
+breeze-icon-theme
+breeze-cursor-theme
+kde-config-gtk-style
+fonts-noto-core
+fonts-noto-ui-core
+fonts-noto-mono
+fonts-noto-color-emoji
+fonts-liberation2
+fonts-hack
+
+# Hardware: network, Bluetooth, sound, power, displays, storage
+network-manager
+plasma-nm
+bluez
+bluedevil
+pipewire-audio
+wireplumber
+plasma-pa
+powerdevil
+power-profiles-daemon
+upower
+udisks2
+kio-extras
+ffmpegthumbs
+kdegraphics-thumbnailers
+ntfs-3g
+exfatprogs
+dosfstools
+btrfs-progs
+xfsprogs
+# Virtual machines: clipboard sharing and screen resizing
+spice-vdagent
+open-vm-tools-desktop
+
+# Settings, information, software and updates
+systemsettings
+kinfocenter
+plasma-discover
+plasma-discover-backend-flatpak
+plasma-discover-backend-fwupd
+packagekit
+fwupd
+flatpak
+flatpak-kcm
+plasma-firewall
+ufw
+unattended-upgrades
+apparmor
+systemd-zram-generator
+plymouth
+plymouth-label
+
+# Applications
+firefox-esr
+dolphin
+konsole
+kwrite
+ark
+gwenview
+okular
+spectacle
+kcalc
+elisa
+haruna
+plasma-systemmonitor
+partitionmanager
+
+# Accessibility
+orca
+speech-dispatcher
+espeak-ng
+
+# Printing (driverless network and USB printers)
+cups
+cups-pk-helper
+print-manager
+ipp-usb
+avahi-daemon
+libnss-mdns
+
+# Passwords: unlock the KDE wallet with the login password
+libpam-kwallet5
+kwalletmanager
+
+# Command line basics
+sudo
+bash-completion
+nano
+less
+man-db
+curl
+wget
+ca-certificates
+zip
+unzip
+p7zip-full
+file
+pciutils
+usbutils
+locales
+console-setup
+keyboard-configuration
+hunspell-en-us

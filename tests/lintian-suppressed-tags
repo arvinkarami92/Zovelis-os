@@ -1,0 +1,5 @@
+# Lintian tags accepted for Zovelis OS packages (one per line).
+# Native packages for a derivative, not uploaded to Debian: no ITP bug.
+initial-upload-closes-no-bugs
+# zovelis-base deliberately replaces /usr/lib/os-release (dpkg-divert).
+diversion-for-unknown-file

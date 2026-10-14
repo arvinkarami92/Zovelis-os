@@ -1,0 +1,103 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# prepare-bootloader efi|bios TARGET [BOOT-DISK]
+#
+# Called by the Zovelis OS installer before it sets up GRUB in the new
+# system mounted at TARGET. It
+#   * installs the GRUB package for this firmware type (grub-efi-amd64 or
+#     grub-pc) from the copy kept in the live system (see the image build
+#     hook 0500-zovelis-grub-pool), so no internet is needed, and
+#   * records in debconf where GRUB lives, so that later GRUB updates
+#     reinstall it in the right place (a GRUB update that cannot find its
+#     boot disk would leave a mismatched, unbootable boot loader).
+set -eu
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+export PATH
+export DEBIAN_FRONTEND=noninteractive
+export LC_ALL=C.UTF-8
+
+POOL=/usr/share/zovelis-installer/pool
+
+log() { echo "prepare-bootloader: $*" >&2; }
+die() { log "ERROR: $*"; exit 1; }
+
+[ "$#" -ge 2 ] || die "usage: prepare-bootloader efi|bios TARGET [BOOT-DISK]"
+firmware=$1
+target=$2
+disk=${3:-}
+
+case "$firmware" in
+    efi | bios) ;;
+    *) die "unknown firmware type '$firmware'" ;;
+esac
+case "$target" in
+    /*) ;;
+    *) die "the target must be an absolute path (got '$target')" ;;
+esac
+[ "$target" != / ] || die "refusing to work on the running system"
+[ -d "$target" ] || die "$target does not exist"
+mountpoint -q "$target" || die "$target is not a mount point"
+[ -x "$target/usr/bin/apt-get" ] || die "$target does not look like the new system"
+
+in_target() {
+    chroot "$target" "$@"
+}
+
+# A name for the disk that survives reboots and disk re-ordering.
+stable_disk_path() {
+    real=$(readlink -f "$1")
+    for link in /dev/disk/by-id/*; do
+        [ -L "$link" ] || continue
+        case ${link##*/} in
+            *-part[0-9]* | wwn-* | nvme-eui.*) continue ;;
+        esac
+        if [ "$(readlink -f "$link")" = "$real" ]; then
+            echo "$link"
+            return 0
+        fi
+    done
+    echo "$real"
+}
+
+case "$firmware" in
+    efi)
+        debs=$POOL/efi
+        # Keep the fallback path EFI/BOOT/BOOTX64.EFI (used by some firmware
+        # and virtual machines) up to date with every GRUB update, and let
+        # updates refresh the firmware boot entry.
+        printf '%s\n' \
+            "grub-efi-amd64 grub2/force_efi_extra_removable boolean true" \
+            "grub-efi-amd64 grub2/update_nvram boolean true" |
+            in_target debconf-set-selections
+        ;;
+    bios)
+        debs=$POOL/bios
+        if [ -z "$disk" ]; then
+            # The user chose not to install a boot loader (manual partitioning).
+            log "no boot loader location chosen; skipping GRUB"
+            exit 0
+        fi
+        [ -b "$disk" ] || die "$disk is not a block device"
+        stable=$(stable_disk_path "$disk")
+        log "GRUB will be kept up to date on $stable"
+        printf '%s\n' \
+            "grub-pc grub-pc/install_devices multiselect $stable" \
+            "grub-pc grub-pc/install_devices_empty boolean false" |
+            in_target debconf-set-selections
+        ;;
+esac
+
+set -- "$debs"/*.deb
+[ -e "$1" ] || die "the GRUB packages are missing from the installation medium ($debs)"
+
+staging=$(mktemp -d "$target/tmp/zovelis-grub.XXXXXX")
+trap 'rm -rf "$staging"' EXIT HUP INT TERM
+cp "$@" "$staging/"
+
+set --
+for deb in "$staging"/*.deb; do
+    set -- "$@" "/tmp/${staging##*/}/${deb##*/}"
+done
+log "installing $*"
+in_target apt-get install --yes --no-install-recommends --no-download "$@"
+log "done"

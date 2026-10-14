@@ -1,0 +1,18 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Put an "Install Zovelis OS" icon on the desktop of the live session.
+# Started at login (/etc/xdg/autostart); does nothing on installed systems.
+set -eu
+
+[ -d /run/live/medium ] || exit 0
+
+dir=$(xdg-user-dir DESKTOP 2>/dev/null || true)
+if [ -z "$dir" ] || [ "$dir" = "$HOME" ]; then
+    dir=$HOME/Desktop
+fi
+mkdir -p "$dir"
+dest=$dir/install-zovelis.desktop
+[ -e "$dest" ] && exit 0
+cp /usr/share/applications/install-zovelis.desktop "$dest"
+# Plasma runs launchers on the desktop only when they are executable.
+chmod 0755 "$dest"

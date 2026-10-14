@@ -17,15 +17,15 @@ trap 'rm -rf "$config"' EXIT
 export XDG_CONFIG_HOME="$config/config"
 export XDG_RUNTIME_DIR="$config/runtime"
 mkdir -p "$XDG_RUNTIME_DIR" && chmod 0700 "$XDG_RUNTIME_DIR"
-export QT_QPA_PLATFORM=${QT_QPA_PLATFORM:-offscreen}
-export QT_QUICK_BACKEND=${QT_QUICK_BACKEND:-software}
-export QT_QUICK_CONTROLS_STYLE=${QT_QUICK_CONTROLS_STYLE:-Fusion}
+export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-offscreen}"
+export QT_QUICK_BACKEND="${QT_QUICK_BACKEND:-software}"
+export QT_QUICK_CONTROLS_STYLE="${QT_QUICK_CONTROLS_STYLE:-Fusion}"
 
 failures=0
 for scheme in Light Dark; do
     for mode in installed live; do
         for size in 900x660 520x620; do
-            prefix="$mode-$(echo $scheme | tr 'A-Z' 'a-z')-$size-"
+            prefix="$mode-$(echo "$scheme" | tr '[:upper:]' '[:lower:]')-$size-"
             if "$APP" --strict --"$mode" --sysroot "$FIXTURES/sysroot" \
                     --color-scheme "$FIXTURES/Zovelis$scheme.colors" \
                     --size "$size" --screenshot-dir "$OUT" --screenshot-prefix "$prefix" >"$OUT/$prefix.log" 2>&1; then

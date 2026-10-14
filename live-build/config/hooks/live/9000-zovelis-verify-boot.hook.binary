@@ -1,0 +1,32 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Runs in the ISO tree (binary/) before the ISO is written: check that both
+# boot menus were generated with the Zovelis entries and that live-build
+# filled in every placeholder.
+set -eu
+
+failures=0
+fail() {
+    echo "E: Zovelis boot menu check FAILED: $1"
+    failures=$((failures + 1))
+}
+
+[ -f boot/grub/grub.cfg ] || fail "boot/grub/grub.cfg missing (UEFI menu)"
+[ -f isolinux/live.cfg ] || fail "isolinux/live.cfg missing (BIOS menu)"
+
+for cfg in boot/grub/grub.cfg isolinux/live.cfg; do
+    [ -f "$cfg" ] || continue
+    grep -q 'Try or Install Zovelis OS' "$cfg" || fail "$cfg has no Zovelis entry"
+    if grep -n '@[A-Z_]*@' "$cfg"; then
+        fail "$cfg still contains placeholders"
+    fi
+    grep -q 'boot=live' "$cfg" || fail "$cfg does not boot the live system"
+done
+for f in boot/grub/splash.png boot/grub/live-theme/theme.txt boot/grub/noto-sans-regular-20.pf2 isolinux/splash.png; do
+    [ -s "$f" ] || fail "$f missing"
+done
+
+if [ "$failures" -ne 0 ]; then
+    exit 1
+fi
+echo "I: Zovelis boot menus ok"

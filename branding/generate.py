@@ -24,6 +24,8 @@ import tempfile
 from pathlib import Path
 
 import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from PIL import Image, ImageDraw, ImageFilter
 from scipy.ndimage import gaussian_filter
 
@@ -389,6 +391,13 @@ def make_plymouth(r: SvgRenderer, svgs: dict) -> None:
     ld.line((7 * ss + ss, 13 * ss, 7 * ss + ss, 10 * ss), fill=(255, 255, 255, 255), width=3 * ss)
     ld.line((21 * ss - ss, 13 * ss, 21 * ss - ss, 10 * ss), fill=(255, 255, 255, 255), width=3 * ss)
     lock.resize((28, 32), Image.LANCZOS).save(theme / "lock.png", optimize=True)
+    # Background of the disk-unlock dialog. The two-step plugin refuses to
+    # start (and Plymouth falls back to plain text) if box.png is missing.
+    box = Image.new("RGBA", (420 * ss, 92 * ss), (0, 0, 0, 0))
+    ImageDraw.Draw(box).rounded_rectangle(
+        (0, 0, 420 * ss - 1, 92 * ss - 1), radius=14 * ss,
+        fill=(11, 27, 43, 230), outline=(*TEAL_300, 110), width=ss)
+    box.resize((420, 92), Image.LANCZOS).save(theme / "box.png", optimize=True)
     write(theme / "zovelis.plymouth", PLYMOUTH_THEME)
 
 
@@ -475,6 +484,75 @@ def make_boot_backgrounds(r: SvgRenderer, svgs: dict) -> None:
         shutil.rmtree(tmp)
 
 
+DESKTOP_SETTINGS = REPO / "packages" / "zovelis-desktop-settings"
+
+
+def _render_png(r: SvgRenderer, svg: Path, width: int) -> Image.Image:
+    tmp = Path(tempfile.mkdtemp())
+    try:
+        r.render(svg, tmp / "out.png", width)
+        return Image.open(tmp / "out.png").convert("RGBA").copy()
+    finally:
+        shutil.rmtree(tmp)
+
+
+def make_desktop_previews(r: SvgRenderer) -> None:
+    """Previews for the global themes, the splash and the login screen."""
+    import mockups
+
+    mark = _render_png(r, SRC / "zovelis-mark.svg", 128)
+    vertical_light = _render_png(r, SRC / "zovelis-logo-vertical-light.svg", 600)
+    horizontal_light = _render_png(r, SRC / "zovelis-logo-horizontal-light.svg", 600)
+    walls = OUT_SHARE / "wallpapers" / "Zovelis" / "contents"
+    for variant, folder in (("light", "images"), ("dark", "images_dark")):
+        wallpaper = Image.open(walls / folder / "1920x1080.jpg")
+        full = mockups.render_desktop(variant, wallpaper, mark, (1920, 1080))
+        out = DESKTOP_SETTINGS / "lookandfeel" / variant / "previews"
+        out.mkdir(parents=True, exist_ok=True)
+        full.convert("RGB").save(out / "fullscreenpreview.jpg", "JPEG", quality=88, optimize=True, progressive=True)
+        full.resize((600, 337), Image.LANCZOS).save(out / "preview.png", optimize=True)
+        mockups.render_splash(vertical_light).convert("RGB").save(out / "splash.png", optimize=True)
+        log(f"global theme previews ({variant})")
+    login = mockups.render_login(Image.open(walls / "images_dark" / "1920x1080.jpg"), horizontal_light)
+    login.convert("RGB").resize((960, 540), Image.LANCZOS).save(
+        DESKTOP_SETTINGS / "sddm-theme" / "preview.png", optimize=True)
+    log("login screen preview")
+    # Images used by the splash screen QML.
+    splash_images = DESKTOP_SETTINGS / "lookandfeel" / "common" / "splash" / "images"
+    splash_images.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(SRC / "zovelis-logo-vertical-light.svg", splash_images / "zovelis-logo-vertical-light.svg")
+
+
+CALAMARES_BRANDING = REPO / "packages" / "calamares-settings-zovelis" / "calamares" / "branding" / "zovelis"
+
+
+def make_installer_branding(r: SvgRenderer) -> None:
+    """Images for the Calamares installer: logos and slideshow pictures."""
+    import mockups
+
+    out = CALAMARES_BRANDING
+    out.mkdir(parents=True, exist_ok=True)
+    r.render(SRC / "zovelis-mark.svg", out / "zovelis-icon.png", 256)
+    r.render(SRC / "zovelis-mark.svg", out / "zovelis-logo.png", 128)
+    r.render(SRC / "zovelis-logo-horizontal.svg", out / "zovelis-welcome.png", 520)
+    mark = _render_png(r, SRC / "zovelis-mark.svg", 128)
+    walls = OUT_SHARE / "wallpapers" / "Zovelis" / "contents"
+    light_wall = Image.open(walls / "images" / "1920x1080.jpg")
+    dark_wall = Image.open(walls / "images_dark" / "1920x1080.jpg")
+    light_desktop = mockups.render_desktop("light", light_wall, mark)
+    dark_desktop = mockups.render_desktop("dark", dark_wall, mark)
+    slides = {
+        "slide-desktop.png": light_desktop,
+        "slide-menu.png": mockups.render_menu(light_wall, mark),
+        "slide-apps.png": mockups.render_apps(light_wall, mark),
+        "slide-security.png": mockups.render_security(),
+        "slide-themes.png": mockups.render_themes(light_desktop, dark_desktop),
+    }
+    for name, image in slides.items():
+        image.convert("RGB").resize((960, 540), Image.LANCZOS).save(out / name, optimize=True)
+        log(f"installer slide {name}")
+
+
 def make_installer_icon() -> None:
     """Installer icon: the mark with a small download badge."""
     mark = (SRC / "zovelis-mark.svg").read_text()
@@ -502,6 +580,8 @@ def main() -> int:
     make_boot_backgrounds(renderer, svgs)
     if not args.skip_wallpapers:
         make_wallpapers()
+    make_desktop_previews(renderer)
+    make_installer_branding(renderer)
     log("done")
     return 0
 

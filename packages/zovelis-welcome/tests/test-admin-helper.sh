@@ -1,4 +1,6 @@
 #!/bin/sh
+# $asroot is deliberately unquoted in this file: it is empty or "unshare -r".
+# shellcheck disable=SC2086
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Exercises zovelis-admin-helper against a temporary directory: argument
 # validation, file contents and permissions, atomic replacement (no symlink

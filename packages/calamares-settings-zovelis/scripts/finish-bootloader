@@ -1,0 +1,54 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# finish-bootloader efi|bios TARGET [BOOT-DISK]
+#
+# Called by the Zovelis OS installer after GRUB was installed into the new
+# system mounted at TARGET.
+#   * UEFI: also install the boot loader (with Secure Boot shim) in the
+#     fallback location EFI/BOOT, which firmware uses when its boot entries
+#     are lost (common in virtual machines and on some laptops).
+#   * Both: check that a GRUB menu was generated.
+set -eu
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+export PATH
+export DEBIAN_FRONTEND=noninteractive
+export LC_ALL=C.UTF-8
+
+log() { echo "finish-bootloader: $*" >&2; }
+die() { log "ERROR: $*"; exit 1; }
+
+[ "$#" -ge 2 ] || die "usage: finish-bootloader efi|bios TARGET [BOOT-DISK]"
+firmware=$1
+target=$2
+disk=${3:-}
+case "$target" in
+    /*) ;;
+    *) die "the target must be an absolute path (got '$target')" ;;
+esac
+[ "$target" != / ] || die "refusing to work on the running system"
+mountpoint -q "$target" || die "$target is not a mount point"
+
+case "$firmware" in
+    efi)
+        mountpoint -q "$target/boot/efi" || die "the EFI system partition is not mounted at $target/boot/efi"
+        chroot "$target" grub-install --target=x86_64-efi --efi-directory=/boot/efi \
+            --bootloader-id=zovelis --force-extra-removable --no-nvram --recheck
+        for f in EFI/zovelis/grubx64.efi EFI/BOOT/BOOTX64.EFI; do
+            found=$(find "$target/boot/efi" -ipath "$target/boot/efi/$f" -type f 2>/dev/null | head -n 1)
+            [ -n "$found" ] || die "$f was not installed"
+        done
+        ;;
+    bios)
+        if [ -z "$disk" ]; then
+            log "no boot loader location chosen; nothing to check"
+            exit 0
+        fi
+        ;;
+    *)
+        die "unknown firmware type '$firmware'"
+        ;;
+esac
+
+[ -s "$target/boot/grub/grub.cfg" ] || die "no GRUB menu was generated"
+grep -q '^menuentry ' "$target/boot/grub/grub.cfg" || die "the GRUB menu has no entries"
+log "done"

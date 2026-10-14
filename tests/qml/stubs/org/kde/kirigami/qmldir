@@ -1,0 +1,2 @@
+module org.kde.kirigami
+singleton Units 2.0 Units.qml

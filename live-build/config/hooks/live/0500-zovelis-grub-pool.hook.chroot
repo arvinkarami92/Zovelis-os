@@ -1,0 +1,30 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# The installer adds grub-pc (BIOS) or grub-efi-amd64 (UEFI) to the system it
+# installs, so that later GRUB updates keep the boot loader current. The two
+# packages conflict with each other, so neither is installed in the image;
+# their .deb files (with any dependencies the image lacks) are stored here and
+# installed from the medium, without internet. The installer deletes this
+# directory from the installed system.
+set -eu
+export DEBIAN_FRONTEND=noninteractive
+
+pool=/usr/share/zovelis-installer/pool
+rm -rf "$pool"
+mkdir -p "$pool"
+
+for spec in bios:grub-pc efi:grub-efi-amd64; do
+    firmware=${spec%%:*}
+    package=${spec#*:}
+    cache=$(mktemp -d)
+    mkdir -p "$cache/partial"
+    echo "I: Zovelis: downloading $package for $firmware installations"
+    apt-get install --yes --download-only --no-install-recommends \
+        -o Dir::Cache::Archives="$cache" "$package"
+    mkdir -p "$pool/$firmware"
+    mv "$cache"/*.deb "$pool/$firmware/"
+    rm -rf "$cache"
+    ls "$pool/$firmware/${package}_"*.deb >/dev/null
+done
+chmod -R a+rX "$pool"
+ls -lR "$pool"

@@ -1,0 +1,12 @@
+label live-@FLAVOUR@
+	menu label ^Try or Install Zovelis OS
+	menu default
+	linux @LINUX@
+	initrd @INITRD@
+	append @APPEND_LIVE@
+
+label live-@FLAVOUR@-safe-graphics
+	menu label Try or Install Zovelis OS (^safe graphics)
+	linux @LINUX@
+	initrd @INITRD@
+	append @APPEND_LIVE@ nomodeset
