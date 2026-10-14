@@ -66,6 +66,11 @@ if [ -n "$session" ]; then
     check "Welcome app started at login" pgrep -x zovelis-welcome
 fi
 check "login screen theme is Zovelis" grep -qx 'Current=zovelis' /etc/sddm.conf.d/10-zovelis.conf
+check "login screen service running" systemctl is-active sddm.service
+if [ "$mode" = installed ] && [ -z "$session" ]; then
+    # Nobody logged in yet: the login screen itself must be up.
+    check "login screen shown (greeter running)" pgrep -f sddm-greeter
+fi
 check "boot splash theme is Zovelis" sh -c 'plymouth-set-default-theme | grep -qx zovelis'
 check "default global theme is Zovelis Light" grep -qx 'LookAndFeelPackage=org.zovelis.light.desktop' /etc/xdg/kdeglobals
 

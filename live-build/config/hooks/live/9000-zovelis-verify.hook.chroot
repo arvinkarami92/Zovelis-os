@@ -29,7 +29,11 @@ check "Flathub preconfigured" test -s /usr/share/flatpak/remotes.d/flathub.flatp
 check "Zovelis global themes installed" test -f /usr/share/plasma/look-and-feel/org.zovelis.light.desktop/contents/defaults
 check "Zovelis global theme is the default" grep -qx 'LookAndFeelPackage=org.zovelis.light.desktop' /etc/xdg/kdeglobals
 check "Zovelis login screen selected" grep -qx 'Current=zovelis' /etc/sddm.conf.d/10-zovelis.conf
+check "Zovelis login screen installed" test -f /usr/share/sddm/themes/zovelis/Main.qml
 check "Breeze login screen present (used by the Zovelis one)" test -f /usr/share/sddm/themes/breeze/Main.qml
+# Both login screens are Qt 6 themes (QtVersion=6), shown by SDDM's Qt 6 greeter.
+check "login screen can show Qt 6 themes" test -x /usr/bin/sddm-greeter-qt6
+check "Plasma (Wayland) session available" test -f /usr/share/wayland-sessions/plasma.desktop
 check "Zovelis boot splash is the default" sh -c 'plymouth-set-default-theme | grep -qx zovelis'
 check "welcome app starts" sh -c 'QT_QPA_PLATFORM=offscreen zovelis-welcome --version'
 check "installer configured" test -f /etc/calamares/branding/zovelis/branding.desc
