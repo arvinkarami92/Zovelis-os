@@ -22,7 +22,7 @@ straight from Debian, and the whole system stays easy to maintain.
 | Web browser, file manager, terminal, settings | Firefox ESR, Dolphin, Konsole, System Settings (plus text editor, image, PDF and media viewers, calculator, screenshots) |
 | Accounts, authentication, firewall, sandboxing, security updates | Local accounts with sudo-based administration and a locked root account, ufw firewall on by default, AppArmor and Flatpak sandboxing, automatic Debian security updates |
 | Light and dark modes | "Zovelis Light" and "Zovelis Dark" global themes; the Welcome app switches between them |
-| Few background processes | Built without "recommended" extras; no SSH server, mail server, modem manager, file-content indexer or KDE PIM; compressed swap in RAM and a small system log |
+| Few background processes | No SSH, mail or RPC server, no legacy printer browsing, no KDE PIM database or phone-pairing daemon; the mobile-broadband service stays off until needed; file search indexes names only; compressed swap in RAM and a small system log |
 | Graphical installer and initial setup | Calamares installer with Zovelis branding, then the Zovelis Welcome app on first login |
 | Bootable ISO for virtual machines | `build/out/zovelis-os-1.0-amd64.iso`; includes guest tools for QEMU/KVM, VirtualBox (VMSVGA) and VMware |
 

@@ -21,7 +21,7 @@ lb config noauto \
     --security true \
     --updates true \
     --backports false \
-    --apt-recommends false \
+    --apt-recommends true \
     --apt-indices true \
     --firmware-binary false \
     --firmware-chroot false \

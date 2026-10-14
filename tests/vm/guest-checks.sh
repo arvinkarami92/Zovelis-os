@@ -81,6 +81,8 @@ done
 
 # --- Hardware support (through standard Linux components) ---------------------
 check "NetworkManager running" systemctl is-active NetworkManager
+check "Wi-Fi support installed (wpasupplicant)" installed wpasupplicant
+check "printing filters installed (cups-filters)" installed cups-filters
 check "Bluetooth service available" sh -c 'systemctl is-enabled bluetooth.service'
 check "PipeWire audio packages present" installed pipewire-audio
 check "removable storage service (udisks2)" systemctl is-active udisks2

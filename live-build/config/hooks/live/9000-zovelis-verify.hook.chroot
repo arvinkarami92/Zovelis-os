@@ -51,6 +51,15 @@ check "terminal installed" installed konsole
 check "settings app installed" installed systemsettings
 check "software center installed" installed plasma-discover
 check "no SSH server" sh -c '! dpkg-query -W -f "\${db:Status-Status}" openssh-server 2>/dev/null | grep -q installed'
+for server in exim4-daemon-light exim4-daemon-heavy postfix rpcbind cups-browsed akonadi-server kdeconnect \
+    plasma-welcome popularity-contest; do
+    check "no $server" sh -c "! dpkg-query -W -f '\${db:Status-Status}' $server 2>/dev/null | grep -q installed"
+done
+check "Wi-Fi support (wpasupplicant)" installed wpasupplicant
+check "Wi-Fi channel rules (wireless-regdb)" installed wireless-regdb
+check "login sessions registered with logind" installed libpam-systemd
+check "printing filters" installed cups-filters
+check "live user can be created (user-setup)" installed user-setup
 check "no password-less sudo rules" sh -c '! grep -rEqs "^[^#]*NOPASSWD" /etc/sudoers /etc/sudoers.d'
 check "machine-id is empty" sh -c '[ ! -s /etc/machine-id ]'
 

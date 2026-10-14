@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Zovelis OS desktop. The image is built without "Recommends", so every
-# package the system needs is listed here (or pulled in as a dependency).
-# All of these are marked "manually installed" in the image, so removing one
-# application later never removes others.
+# Zovelis OS desktop. The image installs Recommends, as Debian does by
+# default (config/apt/zovelis-no-servers.pref keeps network servers out).
+# Everything listed here is marked "manually installed", so removing one
+# application later never removes others, and the packages each feature
+# needs stay even if a recommendation changes.
 
 # Zovelis OS packages (built from packages/ in this source tree)
 zovelis-base
@@ -49,6 +50,15 @@ fonts-hack
 # Hardware: network, Bluetooth, sound, power, displays, storage
 network-manager
 plasma-nm
+# Wi-Fi (NetworkManager only recommends these), the regulatory database for
+# the allowed Wi-Fi channels, and connection sharing (hotspot)
+wpasupplicant
+wireless-regdb
+dnsmasq-base
+# Login sessions registered with systemd-logind (device access, suspend,
+# polkit) and the per-user D-Bus that Plasma uses
+libpam-systemd
+dbus-user-session
 bluez
 bluedevil
 pipewire-audio
@@ -81,6 +91,7 @@ plasma-discover-backend-fwupd
 packagekit
 fwupd
 flatpak
+xdg-desktop-portal
 kde-config-flatpak
 plasma-firewall
 ufw
@@ -110,8 +121,10 @@ orca
 speech-dispatcher
 espeak-ng
 
-# Printing (driverless network and USB printers)
+# Printing (driverless network and USB printers; cups-filters converts
+# documents for the printers)
 cups
+cups-filters
 cups-pk-helper
 print-manager
 ipp-usb

@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Used only while the image is built (live-build removes it afterwards, so
+# users can still install any of these). The image installs Recommends, as
+# Debian does by default; these packages must not come in that way: servers
+# that would listen on the network or run in the background on every
+# Zovelis OS system. (If a package ever *depends* on one of them, the build
+# stops, which is the point.)
+
+Explanation: mail servers (pulled in through "default-mta" recommendations)
+Package: exim4-daemon-light exim4-daemon-heavy postfix sendmail-bin opensmtpd
+Pin: version *
+Pin-Priority: -1
+
+Explanation: remote login and RPC services
+Package: openssh-server telnetd rpcbind
+Pin: version *
+Pin-Priority: -1
+
+Explanation: legacy CUPS printer browsing (UDP port 631); driverless
+Explanation: printing works through avahi and cups itself
+Package: cups-browsed
+Pin: version *
+Pin-Priority: -1
+
+Explanation: background services the desktop does not use (KDE PIM's
+Explanation: database server, phone pairing daemon), KDE's own welcome
+Explanation: wizard (the Zovelis Welcome app replaces it) and Debian's
+Explanation: package-usage reporting
+Package: akonadi-server kdeconnect plasma-welcome popularity-contest
+Pin: version *
+Pin-Priority: -1

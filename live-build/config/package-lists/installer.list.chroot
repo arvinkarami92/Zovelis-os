@@ -5,6 +5,8 @@ live-boot
 live-config
 live-config-systemd
 live-tools
+# creates the live user (live-config only recommends it)
+user-setup
 calamares
 calamares-settings-zovelis
 rsync

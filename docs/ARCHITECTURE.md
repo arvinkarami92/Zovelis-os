@@ -140,8 +140,15 @@ trying.
 `scripts/build-packages.sh` builds the six packages with `dpkg-buildpackage`
 and checks them with lintian. `scripts/build-iso.sh` runs live-build with
 `live-build/auto/config`: Debian trixie + security + updates, `main contrib
-non-free-firmware`, no Recommends, our packages from
+non-free-firmware`, with Recommends (Debian's default; build-time APT
+preferences in `config/apt/` keep mail, SSH and RPC servers, cups-browsed,
+KDE PIM's database server, KDE Connect, KDE's own welcome wizard and
+popularity-contest out), our packages from
 `config/packages.chroot`, hooks that switch the firewall and automatic
 updates on, store the GRUB packages for the installer and verify the image,
 and Zovelis boot menus. The result is `build/out/zovelis-os-<version>-amd64.iso`
 plus its package list and SHA-256 checksum.
+
+ModemManager comes in through NetworkManager's recommendations but is
+switched off by the image hook, since few PCs have a mobile-broadband modem.
+On those that do: `sudo systemctl enable --now ModemManager`.
