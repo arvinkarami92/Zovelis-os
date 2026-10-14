@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Welcome
+Comment=Shows the Zovelis OS welcome guide after signing in
+Exec=zovelis-welcome --autostart
+Icon=zovelis-welcome
+Terminal=false
+NoDisplay=true
+OnlyShowIn=KDE;
+X-KDE-autostart-phase=2
+X-KDE-autostart-condition=zovelis-welcomerc:General:ShowAtLogin:true

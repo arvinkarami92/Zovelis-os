@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Zovelis OS system-wide KDE defaults (installed by zovelis-desktop-settings).
+# Users' own choices are stored in ~/.config/kdeglobals and always win.
+
+[KDE]
+# Global theme applied when a user logs in for the first time. Plasma copies
+# its colours, icons, cursor, splash screen and wallpaper into
+# ~/.config/kdedefaults, so they act as defaults the user can change.
+LookAndFeelPackage=org.zovelis.light.desktop

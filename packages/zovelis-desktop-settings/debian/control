@@ -1,0 +1,32 @@
+Source: zovelis-desktop-settings
+Section: kde
+Priority: optional
+Maintainer: Zovelis OS Developers <maintainers@zovelis.invalid>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: zovelis-desktop-settings
+Architecture: all
+Multi-Arch: foreign
+Depends: ${misc:Depends},
+         breeze-cursor-theme,
+         breeze-icon-theme,
+         kde-style-breeze,
+         kwin-style-breeze,
+         plasma-workspace (>= 4:6.3),
+         qml6-module-org-kde-kirigami,
+         sddm-theme-breeze,
+         zovelis-artwork (>= 1.0),
+Recommends: sddm,
+Description: Zovelis OS desktop look and default settings
+ The Zovelis OS look for the KDE Plasma desktop:
+  * "Zovelis Light" and "Zovelis Dark" global themes (System Settings >
+    Colors & Themes), each with matching colours, icons and wallpaper,
+  * the default desktop layout: one taskbar along the bottom with the
+    Zovelis menu, pinned apps, notification area, clock and date,
+  * a splash screen and a login screen in the Zovelis style,
+  * sensible system-wide defaults: default applications, light-weight file
+    search, and the information shown in About this System.
+ .
+ All of these are defaults: every user can change them in System Settings.

@@ -1,0 +1,18 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Zovelis OS Developers"
+            }
+        ],
+        "Category": "",
+        "Description": "Zovelis OS with dark colors: a taskbar along the bottom, the Zovelis menu and dark windows that are easy on the eyes.",
+        "Id": "org.zovelis.dark.desktop",
+        "License": "GPL-3.0-or-later",
+        "Name": "Zovelis Dark",
+        "Version": "1.0"
+    },
+    "Keywords": "Desktop;Workspace;Appearance;Look and Feel;Global Theme;Zovelis;Dark;Night;",
+    "X-Plasma-APIVersion": "2"
+}

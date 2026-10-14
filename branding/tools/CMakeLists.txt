@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.22)
+project(svgrender LANGUAGES CXX)
+find_package(Qt6 REQUIRED COMPONENTS Gui Svg)
+add_executable(svgrender svgrender.cpp)
+target_link_libraries(svgrender PRIVATE Qt6::Gui Qt6::Svg)

@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Zovelis OS settings for automatic security updates (unattended-upgrades).
+//
+// Which updates are installed is decided by Debian's defaults in
+// 50unattended-upgrades: security fixes and stable point-release fixes for
+// this release only. Whether automatic updates run at all is switched in
+// 20auto-upgrades (use the Welcome app, or:
+//   sudo dpkg-reconfigure unattended-upgrades ).
+
+// Never restart the computer without asking: the update notification in the
+// system tray tells the user when a restart is needed.
+Unattended-Upgrade::Automatic-Reboot "false";
+
+// Keep /boot from filling up with old kernels and remove leftovers.
+Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
+Unattended-Upgrade::Remove-New-Unused-Dependencies "true";
+
+// Do not use up a metered (mobile) data plan.
+Unattended-Upgrade::Skip-Updates-On-Metered-Connections "true";

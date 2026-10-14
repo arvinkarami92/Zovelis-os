@@ -1,0 +1,51 @@
+Source: zovelis-welcome
+Section: kde
+Priority: optional
+Maintainer: Zovelis OS Developers <maintainers@zovelis.invalid>
+Build-Depends: debhelper-compat (= 13),
+               cmake,
+               qt6-base-dev,
+               qt6-declarative-dev,
+               qt6-declarative-dev-tools,
+               qt6-qpa-plugins <!nocheck>,
+               qml6-module-qtquick <!nocheck>,
+               qml6-module-qtquick-controls <!nocheck>,
+               qml6-module-qtquick-layouts <!nocheck>,
+               qml6-module-qtquick-templates <!nocheck>,
+               qml6-module-qtquick-window <!nocheck>,
+               qml6-module-qtqml-workerscript <!nocheck>,
+               qt6-svg-plugins <!nocheck>,
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: zovelis-welcome
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         dbus-bin,
+         libkf6config-bin,
+         pkexec,
+         polkitd,
+         qml6-module-qtqml-workerscript,
+         qml6-module-qtquick,
+         qml6-module-qtquick-controls,
+         qml6-module-qtquick-layouts,
+         qml6-module-qtquick-templates,
+         qml6-module-qtquick-window,
+         qt6-svg-plugins,
+Recommends: plasma-discover,
+            plasma-workspace,
+            systemsettings,
+            unattended-upgrades,
+            zovelis-artwork,
+Description: first-run setup and welcome guide for Zovelis OS
+ Zovelis Welcome greets new users after installation. It lets them pick a
+ light or dark appearance and a comfortable text size, shows whether the
+ firewall and automatic security updates are switched on, and points to
+ popular applications in the Software Center.
+ .
+ In the live session it offers to install Zovelis OS or keep trying it.
+ .
+ The only privileged action (turning automatic security updates on or off)
+ is performed by a small helper started through pkexec, which requires an
+ administrator password.

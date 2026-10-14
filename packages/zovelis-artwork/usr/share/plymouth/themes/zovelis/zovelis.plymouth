@@ -1,0 +1,54 @@
+[Plymouth Theme]
+Name=Zovelis OS
+Description=Boot splash for Zovelis OS: logo with a calm spinner.
+ModuleName=two-step
+
+[two-step]
+Font=Noto Sans 12
+TitleFont=Noto Sans Light 24
+ImageDir=/usr/share/plymouth/themes/zovelis
+DialogHorizontalAlignment=.5
+DialogVerticalAlignment=.62
+TitleHorizontalAlignment=.5
+TitleVerticalAlignment=.382
+HorizontalAlignment=.5
+VerticalAlignment=.72
+WatermarkHorizontalAlignment=.5
+WatermarkVerticalAlignment=.42
+Transition=none
+TransitionDuration=0.0
+BackgroundStartColor=0x071726
+BackgroundEndColor=0x071726
+ProgressBarBackgroundColor=0x1b3a4f
+ProgressBarForegroundColor=0x5fd8db
+MessageBelowAnimation=true
+
+[boot-up]
+UseEndAnimation=false
+
+[shutdown]
+UseEndAnimation=false
+
+[reboot]
+UseEndAnimation=false
+
+[updates]
+SuppressMessages=true
+ProgressBarShowPercentComplete=true
+UseProgressBar=true
+Title=Installing updates…
+SubTitle=Please keep your computer switched on.
+
+[system-upgrade]
+SuppressMessages=true
+ProgressBarShowPercentComplete=true
+UseProgressBar=true
+Title=Upgrading Zovelis OS…
+SubTitle=Please keep your computer switched on.
+
+[firmware-upgrade]
+SuppressMessages=true
+ProgressBarShowPercentComplete=true
+UseProgressBar=true
+Title=Updating firmware…
+SubTitle=Please keep your computer switched on.

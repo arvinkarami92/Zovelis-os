@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Shown in System Settings > About this System.
+[General]
+LogoPath=/usr/share/zovelis/logos/zovelis-mark.svg
+Variant=Desktop

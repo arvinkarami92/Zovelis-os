@@ -1,0 +1,14 @@
+lookandfeel/light/metadata.json usr/share/plasma/look-and-feel/org.zovelis.light.desktop/
+lookandfeel/light/defaults usr/share/plasma/look-and-feel/org.zovelis.light.desktop/contents/
+lookandfeel/light/previews/* usr/share/plasma/look-and-feel/org.zovelis.light.desktop/contents/previews/
+lookandfeel/common/layouts/* usr/share/plasma/look-and-feel/org.zovelis.light.desktop/contents/layouts/
+lookandfeel/common/splash/* usr/share/plasma/look-and-feel/org.zovelis.light.desktop/contents/splash/
+lookandfeel/dark/metadata.json usr/share/plasma/look-and-feel/org.zovelis.dark.desktop/
+lookandfeel/dark/defaults usr/share/plasma/look-and-feel/org.zovelis.dark.desktop/contents/
+lookandfeel/dark/previews/* usr/share/plasma/look-and-feel/org.zovelis.dark.desktop/contents/previews/
+lookandfeel/common/layouts/* usr/share/plasma/look-and-feel/org.zovelis.dark.desktop/contents/layouts/
+lookandfeel/common/splash/* usr/share/plasma/look-and-feel/org.zovelis.dark.desktop/contents/splash/
+usr/share/color-schemes/* usr/share/color-schemes/
+etc/xdg/* etc/xdg/
+etc/sddm.conf.d/* etc/sddm.conf.d/
+sddm-theme/* usr/share/sddm/themes/zovelis/

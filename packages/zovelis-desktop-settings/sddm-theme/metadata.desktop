@@ -1,0 +1,13 @@
+[SddmGreeterTheme]
+Name=Zovelis
+Description=Zovelis OS login screen (based on Plasma's Breeze login screen)
+Author=Zovelis OS Developers
+License=GPL-3.0-or-later
+Type=sddm-theme
+Version=1.0
+Screenshot=preview.png
+MainScript=Main.qml
+ConfigFile=theme.conf
+Theme-Id=zovelis
+Theme-API=2.0
+QtVersion=6

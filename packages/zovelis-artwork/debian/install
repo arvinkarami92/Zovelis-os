@@ -1,0 +1,3 @@
+usr/share/*
+etc/default/grub.d/50-zovelis-theme.cfg etc/default/grub.d/
+debian/build/fonts/*.pf2 usr/share/grub/themes/zovelis/

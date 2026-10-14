@@ -1,0 +1,15 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+set -e
+
+# Zovelis OS ships its own /usr/lib/os-release (and therefore
+# /etc/os-release, a symlink to it). Debian's copy from base-files is kept as
+# /usr/lib/os-release.debian, and base-files upgrades keep updating that copy.
+if [ "$1" = install ] || [ "$1" = upgrade ]; then
+    dpkg-divert --package zovelis-base --rename \
+        --divert /usr/lib/os-release.debian --add /usr/lib/os-release
+fi
+
+#DEBHELPER#
+
+exit 0

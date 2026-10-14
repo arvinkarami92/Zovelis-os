@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: CC0-1.0 -->
+<component type="desktop-application">
+  <id>org.zovelis.Welcome</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Welcome</name>
+  <summary>First-run setup for Zovelis OS</summary>
+  <description>
+    <p>
+      Welcome helps you choose a light or dark appearance and a comfortable
+      text size, shows whether the firewall and automatic security updates
+      are on, and points you to popular apps in the Software Center.
+    </p>
+  </description>
+  <launchable type="desktop-id">org.zovelis.Welcome.desktop</launchable>
+  <developer id="org.zovelis">
+    <name>Zovelis OS Developers</name>
+  </developer>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="1.0.0" date="2026-10-13"/>
+  </releases>
+</component>

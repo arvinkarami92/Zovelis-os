@@ -1,0 +1,18 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Zovelis OS Developers"
+            }
+        ],
+        "Category": "",
+        "Description": "Zovelis OS with light colors: a taskbar along the bottom, the Zovelis menu and bright windows.",
+        "Id": "org.zovelis.light.desktop",
+        "License": "GPL-3.0-or-later",
+        "Name": "Zovelis Light",
+        "Version": "1.0"
+    },
+    "Keywords": "Desktop;Workspace;Appearance;Look and Feel;Global Theme;Zovelis;Light;Bright;",
+    "X-Plasma-APIVersion": "2"
+}

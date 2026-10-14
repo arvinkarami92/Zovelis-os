@@ -1,0 +1,15 @@
+#!/usr/bin/make -f
+# SPDX-License-Identifier: GPL-3.0-or-later
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export QT_SELECT = qt6
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure -- -DBUILD_TESTING=$(if $(filter nocheck,$(DEB_BUILD_OPTIONS) $(DEB_BUILD_PROFILES)),OFF,ON)
+
+override_dh_auto_test:
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	dh_auto_test --no-parallel
+endif

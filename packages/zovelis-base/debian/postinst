@@ -1,0 +1,15 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+set -e
+
+if [ "$1" = configure ]; then
+    # Apply the hardening settings right away on a running system. Inside an
+    # image build (no systemd running) they simply take effect at boot.
+    if [ -d /run/systemd/system ]; then
+        systemctl restart systemd-sysctl.service >/dev/null 2>&1 || true
+    fi
+fi
+
+#DEBHELPER#
+
+exit 0

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Welcome
+GenericName=Welcome and Setup Guide
+Comment=Choose your look, check security and updates, and find apps
+Exec=zovelis-welcome
+Icon=zovelis-welcome
+Terminal=false
+StartupNotify=true
+Categories=Qt;KDE;System;
+Keywords=welcome;setup;start;tour;help;guide;zovelis;

@@ -1,0 +1,26 @@
+Source: zovelis-artwork
+Section: misc
+Priority: optional
+Maintainer: Zovelis OS Developers <maintainers@zovelis.invalid>
+Build-Depends: debhelper-compat (= 13),
+               fonts-noto-core,
+               fonts-noto-mono,
+               grub-common,
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: zovelis-artwork
+Architecture: all
+Multi-Arch: foreign
+Depends: ${misc:Depends},
+         plymouth,
+Recommends: plymouth-label,
+Description: Zovelis OS artwork: logos, wallpapers and boot screens
+ The visual identity of Zovelis OS:
+  * the Zovelis logo and application icons (hicolor theme),
+  * the "Zovelis" wallpaper with light and dark variants,
+  * a Plymouth boot splash, including the disk-unlock prompt,
+  * a GRUB boot menu theme.
+ .
+ The Plasma global themes and the login screen that use this artwork are in
+ zovelis-desktop-settings.

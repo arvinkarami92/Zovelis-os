@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Zovelis OS: file search indexes file names only. Indexing the contents of
+# every document costs a lot of disk and CPU time on older computers; users
+# can switch it on in System Settings > Search > File Search.
+[General]
+only basic indexing=true

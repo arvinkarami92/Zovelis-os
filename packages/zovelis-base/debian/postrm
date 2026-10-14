@@ -1,0 +1,16 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+set -e
+
+# Give /usr/lib/os-release back to base-files when Zovelis OS identity is
+# removed (or when a first installation fails half-way).
+case "$1" in
+    remove|abort-install|disappear)
+        dpkg-divert --package zovelis-base --rename \
+            --divert /usr/lib/os-release.debian --remove /usr/lib/os-release
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0

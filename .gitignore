@@ -1,0 +1,20 @@
+# Build outputs
+/build/
+/out/
+/live-build/.build/
+/live-build/chroot/
+/live-build/binary/
+/live-build/cache/
+/live-build/*.iso
+/live-build/*.contents
+/live-build/*.files
+/live-build/*.packages
+/live-build/*.log
+__pycache__/
+*.pyc
+packages/*/debian/.debhelper/
+packages/*/debian/debhelper-build-stamp
+packages/*/debian/files
+packages/*/debian/*.substvars
+packages/*/debian/*.debhelper.log
+packages/*/obj-*/

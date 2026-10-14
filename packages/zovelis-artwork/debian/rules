@@ -1,0 +1,20 @@
+#!/usr/bin/make -f
+# SPDX-License-Identifier: GPL-3.0-or-later
+NOTO := /usr/share/fonts/truetype/noto
+FONTDIR := debian/build/fonts
+
+%:
+	dh $@
+
+# GRUB can only use bitmap fonts in its own .pf2 format; build them from
+# Noto Sans so the boot menu matches the desktop typography.
+override_dh_auto_build:
+	mkdir -p $(FONTDIR)
+	for size in 14 16 18; do \
+	  grub-mkfont -s $$size -o $(FONTDIR)/noto-sans-regular-$$size.pf2 $(NOTO)/NotoSans-Regular.ttf; \
+	done
+	grub-mkfont -s 18 -o $(FONTDIR)/noto-sans-bold-18.pf2 $(NOTO)/NotoSans-Bold.ttf
+	grub-mkfont -s 16 -o $(FONTDIR)/noto-sans-mono-regular-16.pf2 $(NOTO)/NotoSansMono-Regular.ttf
+
+override_dh_auto_clean:
+	rm -rf debian/build

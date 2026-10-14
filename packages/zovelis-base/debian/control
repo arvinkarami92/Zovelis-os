@@ -1,0 +1,32 @@
+Source: zovelis-base
+Section: admin
+Priority: optional
+Maintainer: Zovelis OS Developers <maintainers@zovelis.invalid>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: zovelis-base
+Architecture: all
+Multi-Arch: foreign
+Depends: ${misc:Depends},
+         apparmor,
+         base-files (>= 13),
+         ufw,
+         unattended-upgrades,
+Recommends: flatpak,
+            os-prober,
+            systemd-zram-generator,
+Description: Zovelis OS system identity and secure defaults
+ This package contains the parts of Zovelis OS that sit below the desktop:
+  * the operating system identity (/etc/os-release names Zovelis OS; the
+    Debian original is kept through a dpkg diversion),
+  * kernel and network hardening settings (sysctl),
+  * automatic security update policy (no automatic reboots, old kernels
+    cleaned up, metered connections respected),
+  * a small system log and compressed swap in RAM (zram),
+  * boot menu defaults (name, other operating systems listed),
+  * the Flathub application repository for sandboxed apps.
+ .
+ The firewall (ufw) and AppArmor are pulled in as dependencies; the Zovelis
+ OS image switches the firewall on during the image build.

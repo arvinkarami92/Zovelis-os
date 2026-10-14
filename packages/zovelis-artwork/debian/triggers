@@ -1,0 +1,2 @@
+# The boot splash lives in the initramfs; rebuild it once dpkg is done.
+activate-noawait update-initramfs

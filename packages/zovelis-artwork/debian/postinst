@@ -1,0 +1,26 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+set -e
+
+PLYMOUTH_THEME=/usr/share/plymouth/themes/zovelis/zovelis.plymouth
+
+if [ "$1" = "configure" ]; then
+    # Boot splash: make Zovelis the default theme on first installation only,
+    # so that an administrator's later choice is respected on upgrades.
+    # (The initramfs, which contains the splash, is rebuilt by the
+    # update-initramfs trigger declared in debian/triggers.)
+    if [ -z "$2" ] && command -v plymouth-set-default-theme >/dev/null 2>&1; then
+        plymouth-set-default-theme zovelis >/dev/null 2>&1 || true
+    fi
+    # Debian can also select the theme through the default.plymouth
+    # alternative; offer ours there too.
+    default=/usr/share/plymouth/themes/default.plymouth
+    if [ -e "$PLYMOUTH_THEME" ] && { [ ! -e "$default" ] || [ -L "$default" ]; }; then
+        update-alternatives --install "$default" default.plymouth "$PLYMOUTH_THEME" 150 \
+            >/dev/null 2>&1 || true
+    fi
+fi
+
+#DEBHELPER#
+
+exit 0

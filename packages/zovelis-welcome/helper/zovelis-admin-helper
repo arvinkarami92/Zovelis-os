@@ -1,0 +1,62 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# zovelis-admin-helper — the only privileged operation of Zovelis Welcome.
+#
+# It is started as root by pkexec (polkit action "org.zovelis.admin-helper",
+# which requires an administrator password) and accepts exactly one command:
+#
+#     auto-updates on|off    turn automatic security updates on or off
+#
+# Anything else is rejected. The helper reads no environment variables and
+# never passes user input to another program.
+set -eu
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+export PATH
+umask 022
+
+APT_CONF_DIR=/etc/apt/apt.conf.d
+TARGET_NAME=20auto-upgrades
+
+usage() {
+    echo "usage: zovelis-admin-helper auto-updates on|off" >&2
+    exit 2
+}
+
+fail() {
+    echo "zovelis-admin-helper: $1" >&2
+    exit "$2"
+}
+
+[ "$#" -eq 2 ] || usage
+[ "$1" = "auto-updates" ] || usage
+case "$2" in
+    on) value=1; answer=true ;;
+    off) value=0; answer=false ;;
+    *) usage ;;
+esac
+
+[ "$(id -u)" -eq 0 ] || fail "must run as root (through pkexec)" 3
+[ -d "$APT_CONF_DIR" ] || fail "$APT_CONF_DIR does not exist" 4
+
+# Write a temporary file next to the target, then rename it into place so
+# APT never sees a half-written file.
+tmp=$(mktemp "$APT_CONF_DIR/.$TARGET_NAME.XXXXXX") || fail "cannot create a temporary file" 4
+trap 'rm -f "$tmp"' EXIT HUP INT TERM
+cat > "$tmp" <<CONF
+// Managed by Zovelis OS. Change it with the Welcome app or this helper:
+//   pkexec /usr/libexec/zovelis/zovelis-admin-helper auto-updates on|off
+// Package lists are refreshed daily either way, so update notifications work.
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "$value";
+CONF
+chmod 0644 "$tmp"
+mv -f "$tmp" "$APT_CONF_DIR/$TARGET_NAME"
+trap - EXIT HUP INT TERM
+
+# Keep debconf in agreement so that package upgrades respect the choice.
+if command -v debconf-set-selections >/dev/null 2>&1; then
+    echo "unattended-upgrades unattended-upgrades/enable_auto_updates boolean $answer" \
+        | debconf-set-selections >/dev/null 2>&1 || true
+fi
+exit 0

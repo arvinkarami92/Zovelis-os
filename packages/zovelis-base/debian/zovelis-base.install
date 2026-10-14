@@ -1,0 +1,7 @@
+files/usr/lib/os-release usr/lib/
+files/usr/lib/sysctl.d/60-zovelis-hardening.conf usr/lib/sysctl.d/
+files/usr/lib/systemd/journald.conf.d/60-zovelis.conf usr/lib/systemd/journald.conf.d/
+files/usr/lib/systemd/zram-generator.conf.d/60-zovelis.conf usr/lib/systemd/zram-generator.conf.d/
+files/etc/apt/apt.conf.d/52zovelis-unattended-upgrades etc/apt/apt.conf.d/
+files/etc/default/grub.d/10-zovelis.cfg etc/default/grub.d/
+files/usr/share/flatpak/remotes.d/flathub.flatpakrepo usr/share/flatpak/remotes.d/

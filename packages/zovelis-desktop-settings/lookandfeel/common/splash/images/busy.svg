@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+  <!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->
+  <circle cx="24" cy="24" r="19" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="4"/>
+  <path d="M24 5 A19 19 0 0 1 43 24" fill="none" stroke="#5FD8DB" stroke-width="4" stroke-linecap="round"/>
+</svg>

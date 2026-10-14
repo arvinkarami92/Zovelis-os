@@ -1,0 +1,12 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Zovelis OS Developers"
+            }
+        ],
+        "Id": "Zovelis",
+        "License": "CC-BY-SA-4.0",
+        "Name": "Zovelis"
+    }
+}
