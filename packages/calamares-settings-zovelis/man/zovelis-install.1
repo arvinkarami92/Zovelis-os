@@ -1,0 +1,19 @@
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.TH ZOVELIS-INSTALL 1 "October 2026" "Zovelis OS 1.0" "User Commands"
+.SH NAME
+zovelis-install \- start the Zovelis OS installer
+.SH SYNOPSIS
+.B zovelis-install
+.SH DESCRIPTION
+.B zovelis-install
+starts the graphical installer (Calamares) with administrator rights, from
+the Zovelis OS live system. On the live system no password is needed; the
+installer refuses to run anywhere else.
+.PP
+The installer copies the live system to the chosen disk, creates the user
+account, sets up the GRUB boot loader (with Secure Boot support on UEFI) and
+removes the live-system tools and itself from the installed system. Its log
+is kept in
+.IR /var/log/installer/calamares.log .
+.SH SEE ALSO
+.BR calamares (8)

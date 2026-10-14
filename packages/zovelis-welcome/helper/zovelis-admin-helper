@@ -39,9 +39,10 @@ esac
 [ "$(id -u)" -eq 0 ] || fail "must run as root (through pkexec)" 3
 [ -d "$APT_CONF_DIR" ] || fail "$APT_CONF_DIR does not exist" 4
 
-# Write a temporary file next to the target, then rename it into place so
-# APT never sees a half-written file.
-tmp=$(mktemp "$APT_CONF_DIR/.$TARGET_NAME.XXXXXX") || fail "cannot create a temporary file" 4
+# Write a temporary file in the parent directory (same file system, but not
+# a directory APT reads), then rename it into place so APT never sees a
+# half-written file.
+tmp=$(mktemp "$(dirname "$APT_CONF_DIR")/.zovelis-$TARGET_NAME.XXXXXX") || fail "cannot create a temporary file" 4
 trap 'rm -f "$tmp"' EXIT HUP INT TERM
 cat > "$tmp" <<CONF
 // Managed by Zovelis OS. Change it with the Welcome app or this helper:

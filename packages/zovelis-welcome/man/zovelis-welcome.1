@@ -1,0 +1,48 @@
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.TH ZOVELIS-WELCOME 1 "October 2026" "Zovelis OS 1.0" "User Commands"
+.SH NAME
+zovelis-welcome \- welcome guide and first-run setup for Zovelis OS
+.SH SYNOPSIS
+.B zovelis-welcome
+.RB [ \-\-autostart ]
+.RB [ \-\-live | \-\-installed ]
+.SH DESCRIPTION
+.B zovelis-welcome
+greets new users after installation. It lets them choose a light or dark
+appearance and a comfortable text size, shows whether the firewall,
+automatic security updates and app sandboxing are switched on, and points
+to popular applications in the Software Center.
+.PP
+On the live system (started from a USB stick or DVD) it offers to install
+Zovelis OS or to keep trying it.
+.PP
+The program runs without privileges. Turning automatic security updates on
+or off asks for an administrator password (through
+.BR pkexec (1))
+and runs
+.IR /usr/libexec/zovelis/zovelis-admin-helper .
+.SH OPTIONS
+.TP
+.B \-\-autostart
+Used when started at login: exit quietly if the user chose not to see the
+guide at every login.
+.TP
+.B \-\-live
+Show the live-system page even on an installed system.
+.TP
+.B \-\-installed
+Show the installed-system pages even on the live system.
+.TP
+.B \-\-dry\-run
+Do not change anything; record the commands that would run.
+.TP
+.B \-h, \-\-help
+Show all options, including those used by the test-suite.
+.SH FILES
+.TP
+.I ~/.config/zovelis-welcomerc
+Whether the guide is shown at every login
+.RB ( ShowAtLogin ).
+.SH SEE ALSO
+.BR systemsettings (1),
+.BR plasma-discover (1)

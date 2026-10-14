@@ -11,6 +11,18 @@ option(BUILD_TESTING "Build the unit and UI smoke tests" ON)
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Gui Widgets Qml Quick QuickControls2)
 qt_standard_project_setup(REQUIRES 6.5)
+# qt_standard_project_setup() adds $ORIGIN-relative RPATHs for relocatable
+# installs. Distribution packages install into the standard directories and
+# must not carry an RPATH (Debian policy 10.2, lintian).
+option(ZOVELIS_INSTALL_RPATH "Give the installed program an \$ORIGIN-relative RPATH" OFF)
+if(NOT ZOVELIS_INSTALL_RPATH)
+    set(CMAKE_SKIP_INSTALL_RPATH ON)
+endif()
+# Files in qml/components and qml/pages belong to the one QML module defined
+# below; Qt 6.8 asks projects to state how such directories are handled.
+if(QT_KNOWN_POLICY_QTP0004)
+    qt_policy(SET QTP0004 NEW)
+endif()
 
 # Pure parsing helpers, shared with the unit tests.
 add_library(zovelis_welcome_logic STATIC
