@@ -172,6 +172,30 @@ expect 0 "add-desktop-icon: puts the installer on the live desktop" unshare --mo
     mount --bind '$tmp/apps' /usr/share/applications &&
     HOME='$home' XDG_CONFIG_HOME='$home/.config' '$SCRIPTS/add-desktop-icon'"
 check "add-desktop-icon: launcher is executable" "[ -x '$home/Desktop/install-zovelis.desktop' ]"
+# --- live-config component: session for the automatic login ----------------
+component=$SCRIPTS/../data/live-config/0086-zovelis-sddm
+fakeroot_dir=$tmp/liveroot
+mkdir -p "$fakeroot_dir/etc" "$fakeroot_dir/proc" "$fakeroot_dir/usr/share/wayland-sessions" \
+    "$fakeroot_dir/usr/share/xsessions"
+: > "$fakeroot_dir/usr/share/wayland-sessions/plasma.desktop"
+: > "$fakeroot_dir/usr/share/xsessions/plasmax11.desktop"
+live_session() {  # live_session SDDM-CONF CMDLINE: run the component, print Session=
+    printf '%b' "$1" > "$fakeroot_dir/etc/sddm.conf"
+    echo "$2" > "$fakeroot_dir/proc/cmdline"
+    "$component" "$fakeroot_dir" >/dev/null 2>&1 || echo "exit-status-$?"
+    grep '^Session=' "$fakeroot_dir/etc/sddm.conf" || echo "no-session"
+}
+check "live login: empty session from live-config becomes Plasma (Wayland)" \
+    "[ \"\$(live_session '[Autologin]\nUser=zovelis\nSession=\n' 'boot=live quiet')\" = Session=plasma.desktop ]"
+check "live login: safe graphics (nomodeset) uses Plasma (X11)" \
+    "[ \"\$(live_session '[Autologin]\nUser=zovelis\nSession=\n' 'boot=live nomodeset')\" = Session=plasmax11.desktop ]"
+check "live login: a missing Session line is added" \
+    "[ \"\$(live_session '[Autologin]\nUser=zovelis\n' 'boot=live')\" = Session=plasma.desktop ]"
+check "live login: nothing changes without automatic login" \
+    "[ \"\$(live_session '[Autologin]\nUser=\nSession=\n' 'boot=live')\" = Session= ]"
+rm "$fakeroot_dir/usr/share/xsessions/plasmax11.desktop"
+check "live login: nomodeset without an X11 session keeps Wayland" \
+    "[ \"\$(live_session '[Autologin]\nUser=zovelis\nSession=\n' 'nomodeset')\" = Session=plasma.desktop ]"
 expect 1 "run-calamares: refuses to run without root" setpriv --reuid=65534 --regid=65534 --clear-groups "$SCRIPTS/run-calamares"
 expect 1 "run-calamares: refuses outside the live system" "$SCRIPTS/run-calamares"
 expect 1 "zovelis-install: refuses outside the live system" env -u DISPLAY "$SCRIPTS/zovelis-install"

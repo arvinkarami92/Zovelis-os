@@ -12,3 +12,4 @@ data/install-zovelis.desktop usr/share/applications/
 data/zovelis-installer-desktop-icon.desktop etc/xdg/autostart/
 data/org.zovelis.installer.policy usr/share/polkit-1/actions/
 data/49-zovelis-installer.rules usr/share/polkit-1/rules.d/
+data/live-config/0086-zovelis-sddm usr/lib/live/config/

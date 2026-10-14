@@ -1,0 +1,34 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# live-config component (runs right after live-config's own 0085-sddm):
+# log the live user in to Plasma automatically.
+#
+# live-config picks the session for SDDM's automatic login from the
+# x-session-manager alternative, and only knows Plasma's X11 start script.
+# Anything else leaves "Session=" empty, and SDDM then shows its login
+# screen instead of the desktop. Plasma on Wayland is the default here; with
+# "nomodeset" (the boot menu's "safe graphics" entry) the X11 session is
+# used, which also works without a graphics driver.
+# (Part of the live system only: the installer removes this package.)
+
+# live-config runs this without arguments; the tests pass a directory that
+# stands in for /.
+root=${1:-}
+conf=$root/etc/sddm.conf
+[ -f "$conf" ] || exit 0
+# No automatic login configured (e.g. "noautologin" on the kernel command line).
+grep -q '^User=.' "$conf" || exit 0
+
+session=plasma.desktop
+if grep -qw nomodeset "$root/proc/cmdline" && [ -e "$root/usr/share/xsessions/plasmax11.desktop" ]; then
+    session=plasmax11.desktop
+fi
+if [ ! -e "$root/usr/share/wayland-sessions/$session" ] && [ ! -e "$root/usr/share/xsessions/$session" ]; then
+    echo "0086-zovelis-sddm: no Plasma session found; leaving $conf as it is" >&2
+    exit 0
+fi
+if grep -q '^Session=' "$conf"; then
+    sed -i "s/^Session=.*/Session=$session/" "$conf"
+else
+    sed -i "/^\[Autologin\]/a Session=$session" "$conf"
+fi

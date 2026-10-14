@@ -42,6 +42,8 @@ if [ -e /usr/lib/x86_64-linux-gnu/qt6/plugins/platforms/libqoffscreen.so ]; then
     check "welcome app starts" sh -c 'QT_QPA_PLATFORM=offscreen zovelis-welcome --version'
 fi
 check "installer configured" test -f /etc/calamares/branding/zovelis/branding.desc
+check "live session logs in to Plasma automatically" test -x /usr/lib/live/config/0086-zovelis-sddm
+check "live-config's own SDDM step runs first" test -x /usr/lib/live/config/0085-sddm
 check "GRUB packages for the installer present" sh -c 'ls /usr/share/zovelis-installer/pool/bios/grub-pc_*.deb /usr/share/zovelis-installer/pool/efi/grub-efi-amd64_*.deb'
 check "web browser installed" installed firefox-esr
 check "file manager installed" installed dolphin
