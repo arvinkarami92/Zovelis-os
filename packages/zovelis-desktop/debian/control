@@ -30,7 +30,7 @@ Depends: ${misc:Depends},
          breeze-gtk-theme,
          kde-config-gtk-style,
          plasma-integration,
-         qml6-module-org-kde-qqc2desktopstyle,
+         qml6-module-org-kde-desktop,
          xdg-desktop-portal-kde,
 # Hardware: displays, power, network, Bluetooth, sound, storage
          bluedevil,
