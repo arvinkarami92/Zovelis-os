@@ -45,7 +45,12 @@ fi
 # 2. Our packages, installed into the image from a local repository.
 #    (Git does not keep empty directories, so create it here.)
 mkdir -p "$WORK/config/packages.chroot"
-cp "$DEBS"/*.deb "$WORK/config/packages.chroot/"
+for deb in "$DEBS"/*.deb; do
+    case ${deb##*/} in
+        *-dbgsym_*) continue ;;  # live-build would install it too
+    esac
+    cp "$deb" "$WORK/config/packages.chroot/"
+done
 
 # 3. Fonts for the Zovelis boot menu (GRUB can only use its own bitmap
 #    font format; made from Noto Sans like the desktop's fonts).
