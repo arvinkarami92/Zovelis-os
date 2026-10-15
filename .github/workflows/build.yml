@@ -53,7 +53,9 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          if ! ./scripts/build-in-container.sh all 2>&1 | tee build.log; then
+          # Docker: its daemon is rootful, so the build container can create
+          # the device nodes live-build needs (rootless Podman cannot).
+          if ! CONTAINER_ENGINE=docker ./scripts/build-in-container.sh all 2>&1 | tee build.log; then
             # Last lines of the log as an annotation on the run page.
             # (Carriage returns from progress output would end the
             # annotation early, so they are removed.)

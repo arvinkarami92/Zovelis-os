@@ -13,7 +13,7 @@
 ## The easy way: a container
 
 ```sh
-./scripts/build-in-container.sh        # uses podman or docker
+./scripts/build-in-container.sh        # Docker, or: sudo ./scripts/build-in-container.sh with Podman
 ```
 
 This starts `debian:trixie`, installs the build tools

@@ -63,7 +63,7 @@ docs/                          architecture, building, testing, security, design
 
 ## Building
 
-On Debian 13, or anywhere with Docker/Podman:
+On Debian 13, or anywhere with Docker (or Podman run as root):
 
 ```sh
 ./scripts/build-in-container.sh          # packages + ISO, in a Debian 13 container

@@ -28,6 +28,20 @@ command -v lb >/dev/null || die "live-build is not installed (scripts/setup-buil
 grep -qs '^VERSION_CODENAME=trixie' /etc/os-release || die "build on Debian 13 (trixie)"
 ls "$DEBS"/*.deb >/dev/null 2>&1 || die "no packages in $DEBS; run scripts/build-packages.sh first"
 
+# 0. The image chroot needs working device nodes (debootstrap creates
+#    /dev/null etc. with mknod). Without them -- a rootless container, or a
+#    file system mounted "nodev" -- /dev/null ends up a plain file and package
+#    scripts break half-way through the build, so check first.
+mkdir -p "$ROOT/build"
+devtest=$ROOT/build/.devnull-test
+rm -f "$devtest"
+if ! mknod -m 666 "$devtest" c 1 3 2>/dev/null || ! sh -c ': > "$1"' -- "$devtest" 2>/dev/null ||
+    [ ! -c "$devtest" ]; then
+    rm -f "$devtest"
+    die "cannot create working device nodes in $ROOT/build (rootless container, or a file system mounted nodev); build as root on a normal file system, or with docker / sudo podman"
+fi
+rm -f "$devtest"
+
 # 1. Fresh work directory (optionally keeping the package cache).
 if [ -d "$WORK" ]; then
     if [ "${ZOVELIS_KEEP_CACHE:-0}" = 1 ] && [ -d "$WORK/cache" ]; then
