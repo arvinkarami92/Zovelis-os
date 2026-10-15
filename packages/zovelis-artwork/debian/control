@@ -13,8 +13,10 @@ Package: zovelis-artwork
 Architecture: all
 Multi-Arch: foreign
 Depends: ${misc:Depends},
+# plymouth-themes has the "two-step" splash plugin the Zovelis theme uses;
+# without it the theme cannot be selected.
          plymouth,
-Recommends: plymouth-label,
+         plymouth-themes,
 Description: Zovelis OS artwork: logos, wallpapers and boot screens
  The visual identity of Zovelis OS:
   * the Zovelis logo and application icons (hicolor theme),

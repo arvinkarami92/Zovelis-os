@@ -26,7 +26,25 @@ for f in boot/grub/splash.png boot/grub/live-theme/theme.txt boot/grub/noto-sans
     [ -s "$f" ] || fail "$f missing"
 done
 
+# The finished root file system: Zovelis' os-release, and none of the
+# diversions live-build uses while building (they would end up on installed
+# systems).
+squashfs=live/filesystem.squashfs
+if [ -s "$squashfs" ] && command -v unsquashfs >/dev/null 2>&1; then
+    peek=$(mktemp -d)
+    unsquashfs -q -n -d "$peek/root" "$squashfs" etc/os-release usr/lib/os-release var/lib/dpkg/diversions >/dev/null 2>&1 || true
+    if ! grep -qx 'ID=zovelis' "$peek/root/etc/os-release" 2>/dev/null; then
+        fail "the image's /etc/os-release is not Zovelis OS' ($(ls -l "$peek/root/etc/os-release" 2>&1 | cut -c1-120); $(grep -h '^ID=' "$peek/root/etc/os-release" 2>&1 | head -n 1))"
+    fi
+    if grep -qx '/etc/os-release.debootstrap' "$peek/root/var/lib/dpkg/diversions" 2>/dev/null; then
+        fail "live-build's os-release diversion is still in the image"
+    fi
+    rm -rf "$peek"
+else
+    echo "W: Zovelis: cannot look into $squashfs (unsquashfs missing?)"
+fi
+
 if [ "$failures" -ne 0 ]; then
     exit 1
 fi
-echo "I: Zovelis boot menus ok"
+echo "I: Zovelis boot menus and root file system ok"

@@ -206,6 +206,11 @@ plycfg = ini(ply / "zovelis.plymouth")
 check(plycfg["Plymouth Theme"]["ModuleName"] == "two-step", "boot splash uses the two-step plugin")
 for name in ("lock.png", "box.png", "entry.png", "bullet.png", "watermark.png", "throbber-0001.png"):
     check((ply / name).exists(), f"boot splash image {name} (required by two-step)")
+# In Debian 13 the two-step plugin is in plymouth-themes, not in plymouth;
+# plymouth-set-default-theme refuses a theme whose plugin is missing.
+artwork_control = (PKG / "zovelis-artwork/debian/control").read_text()
+check(re.search(r"^\s+plymouth-themes,", artwork_control, re.M) is not None,
+      "zovelis-artwork depends on plymouth-themes (the two-step plugin)")
 
 # --- Welcome app ----------------------------------------------------------
 helper = (PKG / "zovelis-welcome/helper/zovelis-admin-helper").read_text()

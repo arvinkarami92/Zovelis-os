@@ -24,7 +24,17 @@ absent() {
     ! installed "$1"
 }
 
-check "os-release names Zovelis OS" grep -qx 'ID=zovelis' /etc/os-release
+# While it builds, live-build (trixie) puts its own /etc/os-release in place
+# (a local diversion to /etc/os-release.debootstrap) and restores Debian's
+# symlink to /usr/lib/os-release when the root file system is finished; the
+# boot-medium check looks at the finished image.
+os_release=/etc/os-release
+if dpkg-divert --list /etc/os-release | grep -q 'os-release\.debootstrap'; then
+    os_release=/etc/os-release.debootstrap
+fi
+check "os-release names Zovelis OS" grep -qx 'ID=zovelis' "$os_release"
+check "/etc/os-release is the symlink to Zovelis' /usr/lib/os-release" \
+    sh -c "[ \"\$(readlink '$os_release')\" = ../usr/lib/os-release ]"
 check "Debian's os-release is kept as a diversion" test -f /usr/lib/os-release.debian
 check "firewall enabled at boot" grep -qx 'ENABLED=yes' /etc/ufw/ufw.conf
 check "automatic security updates enabled" grep -q 'Unattended-Upgrade "1"' /etc/apt/apt.conf.d/20auto-upgrades

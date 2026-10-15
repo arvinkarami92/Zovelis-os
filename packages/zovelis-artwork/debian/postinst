@@ -10,7 +10,8 @@ if [ "$1" = "configure" ]; then
     # (The initramfs, which contains the splash, is rebuilt by the
     # update-initramfs trigger declared in debian/triggers.)
     if [ -z "$2" ] && command -v plymouth-set-default-theme >/dev/null 2>&1; then
-        plymouth-set-default-theme zovelis >/dev/null 2>&1 || true
+        plymouth-set-default-theme zovelis ||
+            echo "zovelis-artwork: could not make Zovelis the boot splash (see above)" >&2
     fi
     # Debian can also select the theme through the default.plymouth
     # alternative; offer ours there too.
