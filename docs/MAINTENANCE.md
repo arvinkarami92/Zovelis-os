@@ -9,7 +9,7 @@
 | Zovelis packages | when changed | Bump the version in `debian/changelog` (`dch -i`), rebuild, publish (below). |
 | Flathub key | before 14 June 2027, and if Flathub rotates it | The pinned key (`6E5C05D9…4184DD4D907A7CAE`) expires on 2027-06-14 unless Flathub extends it. Run `scripts/fetch-flathub-remote.sh --refresh` once Flathub publishes the extension (same fingerprint, so the pin still matches) and follow Flathub's advice for existing installations. A changed fingerprint stops the script: verify the new key with Flathub, then update `packages/zovelis-base/flathub.fingerprint`. |
 | Plasma minor version | next Debian release only | Within Debian 13, Plasma stays 6.3. Re-check the login-screen wrapper, global themes and layout script before moving to Debian 14. |
-| Debian 14 "forky" | ~2027 | New `VERSION_CODENAME`/`DEBIAN_CODENAME` in `os-release`, package names in the package lists, `distribution` in `live-build/auto/config`. |
+| Debian 14 "forky" | ~2027 | New `VERSION_CODENAME`/`DEBIAN_CODENAME` in `os-release`, package names in the package lists (for example the Breeze icons move back from `kf6-breeze-icon-theme` to `breeze-icon-theme`), `distribution` in `live-build/auto/config`. Re-run `tests/installer/check_calamares_yaml.py` and the schema check against the new Calamares. |
 
 ## Publishing Zovelis package updates
 
