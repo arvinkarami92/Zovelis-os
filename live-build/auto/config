@@ -23,6 +23,7 @@ lb config noauto \
     --backports false \
     --apt-recommends true \
     --apt-indices true \
+    --apt-source-archives false \
     --firmware-binary false \
     --firmware-chroot false \
     --linux-flavours amd64 \

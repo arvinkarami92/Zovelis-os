@@ -1,17 +1,30 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Firmware and CPU microcode for common hardware (Debian non-free-firmware),
-# so Wi-Fi, Bluetooth, graphics and sound work out of the box.
+# so Wi-Fi, Bluetooth, graphics and sound work out of the box. A selection
+# for PCs and laptops: firmware for servers, network switches and TV cards
+# stays out (installable later).
 firmware-linux-free
 firmware-misc-nonfree
+# Graphics (NVIDIA: needed by the open nouveau driver on recent cards)
 firmware-amd-graphics
 firmware-intel-graphics
+firmware-nvidia-graphics
+# Wi-Fi and Bluetooth: Intel, Realtek, Qualcomm Atheros, Broadcom,
+# MediaTek, Marvell (e.g. Microsoft Surface)
 firmware-iwlwifi
 firmware-realtek
 firmware-atheros
 firmware-brcm80211
 firmware-mediatek
+firmware-libertas
+bluez-firmware
+# Sound: Intel audio DSPs (SOF) and the Cirrus Logic speaker amplifiers of
+# many recent laptops
 firmware-intel-sound
 firmware-sof-signed
-bluez-firmware
+firmware-cirrus
+# Intel sensor hub (screen rotation, lid and light sensors) and NPU
+firmware-intel-misc
+# CPU microcode (security and stability fixes)
 intel-microcode
 amd64-microcode

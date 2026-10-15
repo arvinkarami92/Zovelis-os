@@ -38,3 +38,9 @@ Explanation: or depend on it. Zovelis OS uses its own artwork throughout.
 Package: desktop-base sddm-theme-debian-breeze sddm-theme-debian-elarun sddm-theme-debian-maui
 Pin: version *
 Pin-Priority: -1
+
+Explanation: firmware for Marvell network switch chips (60 MB), recommended
+Explanation: by the Marvell Wi-Fi firmware but of no use in a PC
+Package: firmware-marvell-prestera
+Pin: version *
+Pin-Priority: -1

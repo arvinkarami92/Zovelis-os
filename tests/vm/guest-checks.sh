@@ -93,6 +93,11 @@ check "Wi-Fi support installed (wpasupplicant)" installed wpasupplicant
 check "printing filters installed (cups-filters)" installed cups-filters
 check "Bluetooth service available" sh -c 'systemctl is-enabled bluetooth.service'
 check "PipeWire audio packages present" installed pipewire-audio
+for p in firmware-iwlwifi firmware-realtek firmware-sof-signed firmware-cirrus firmware-nvidia-graphics \
+    intel-microcode amd64-microcode; do
+    check "firmware installed: $p" installed "$p"
+done
+check "no network-switch firmware" sh -c '! dpkg-query -W -f "\${db:Status-Status}" firmware-marvell-prestera 2>/dev/null | grep -q installed'
 check "removable storage service (udisks2)" systemctl is-active udisks2
 info "network: $(nmcli -t -f STATE,CONNECTIVITY general 2>/dev/null)"
 
@@ -104,6 +109,7 @@ info "AppArmor: $(aa-status 2>/dev/null | head -n 2 | tr '\n' ' ')"
 check "automatic security updates enabled" sh -c 'apt-config dump APT::Periodic::Unattended-Upgrade | grep -q "\"1\""'
 check "update timers active" systemctl is-active apt-daily.timer apt-daily-upgrade.timer
 check "Debian security updates configured" sh -c 'grep -rqs "security.debian.org" /etc/apt/sources.list /etc/apt/sources.list.d/'
+check "no source package lines (smaller updates)" sh -c '! grep -rqsE "^[[:space:]]*(deb-src|Types:.*deb-src)" /etc/apt/sources.list /etc/apt/sources.list.d/'
 check "Flathub available for sandboxed apps" sh -c 'flatpak remotes --system --columns=name | grep -qx flathub'
 check "kernel pointers hidden" sh -c '[ "$(sysctl -n kernel.kptr_restrict)" -ge 1 ]'
 check "ptrace restricted" sh -c '[ "$(sysctl -n kernel.yama.ptrace_scope)" -ge 1 ]'

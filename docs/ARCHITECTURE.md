@@ -151,12 +151,22 @@ and checks them with lintian. `scripts/build-iso.sh` runs live-build with
 non-free-firmware`, with Recommends (Debian's default; build-time APT
 preferences in `config/apt/zovelis-keep-out.pref` keep mail, SSH and RPC
 servers, cups-browsed, KDE PIM's database server, KDE Connect, KDE's own
-welcome wizard, popularity-contest and Debian's artwork (`desktop-base`,
-which would switch new users to the Debian wallpaper) out), our packages from
-`config/packages.chroot`, hooks that switch the firewall and automatic
-updates on, store the GRUB packages for the installer and verify the image,
-and Zovelis boot menus. The result is `build/out/zovelis-os-<version>-amd64.iso`
-plus its package list and SHA-256 checksum.
+welcome wizard, popularity-contest, network-switch firmware and Debian's
+artwork (`desktop-base`, which would switch new users to the Debian
+wallpaper) out), our packages from `config/packages.chroot`, hooks that
+switch the firewall and automatic updates on, store the GRUB packages for
+the installer and verify the image, and Zovelis boot menus. The installed
+system's package sources have no `deb-src` lines (source packages are not
+needed on a desktop, and `apt update` stays smaller). The result is
+`build/out/zovelis-os-<version>-amd64.iso` plus its package list and
+SHA-256 checksum.
+
+Firmware (`config/package-lists/firmware.list.chroot`) is a selection for
+PCs and laptops: graphics (AMD, Intel, NVIDIA for the open nouveau driver),
+Wi-Fi and Bluetooth (Intel, Realtek, Qualcomm Atheros, Broadcom, MediaTek,
+Marvell), sound (Intel SOF, Cirrus Logic amplifiers), the Intel sensor hub,
+and CPU microcode. Firmware for servers, switches and TV cards can be
+installed later with APT.
 
 ModemManager comes in through NetworkManager's recommendations but is
 switched off by the image hook, since few PCs have a mobile-broadband modem.

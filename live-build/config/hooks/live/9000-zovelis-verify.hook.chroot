@@ -60,6 +60,8 @@ check "Wi-Fi support (wpasupplicant)" installed wpasupplicant
 check "Wi-Fi channel rules (wireless-regdb)" installed wireless-regdb
 check "login sessions registered with logind" installed libpam-systemd
 check "printing filters" installed cups-filters
+check "laptop speaker firmware (Cirrus Logic)" installed firmware-cirrus
+check "no network-switch firmware" sh -c "! dpkg-query -W -f '\${db:Status-Status}' firmware-marvell-prestera 2>/dev/null | grep -q installed"
 check "live user can be created (user-setup)" installed user-setup
 check "no password-less sudo rules" sh -c '! grep -rEqs "^[^#]*NOPASSWD" /etc/sudoers /etc/sudoers.d'
 check "machine-id is empty" sh -c '[ ! -s /etc/machine-id ]'
