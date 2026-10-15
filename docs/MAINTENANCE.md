@@ -29,7 +29,8 @@ Until then, `zovelis-*` package updates reach users only through new ISOs.
 ## Releasing an ISO
 
 1. `./tests/run-static-checks.sh`
-2. `./scripts/build-in-container.sh` (or the step-by-step build)
+2. `ZOVELIS_LINTIAN=strict ./scripts/build-in-container.sh` (or the
+   step-by-step build): packages must be lintian-clean for a release
 3. `./tests/vm/run-vm-tests.sh build/out/*.iso bios uefi uefi-secure`
 4. Installation tests from `docs/TESTING.md` (BIOS, UEFI, encrypted)
 5. Publish the ISO with its `.sha256` file (and a detached GPG signature).

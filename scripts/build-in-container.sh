@@ -31,5 +31,5 @@ esac
 image=docker.io/library/debian:trixie
 exec "$engine" run --rm --privileged \
     -v "$ROOT:/src" -w /src \
-    -e ZOVELIS_MIRROR -e ZOVELIS_SECURITY_MIRROR -e ZOVELIS_VERSION \
+    -e ZOVELIS_MIRROR -e ZOVELIS_SECURITY_MIRROR -e ZOVELIS_VERSION -e ZOVELIS_LINTIAN \
     "$image" sh -c "./scripts/setup-build-env.sh && $inner"

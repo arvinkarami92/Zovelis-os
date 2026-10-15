@@ -53,6 +53,7 @@ fails (`live-build/config/hooks/live/9000-zovelis-verify.hook.chroot`).
 | `ZOVELIS_MIRROR` | `https://deb.debian.org/debian/` | Mirror used while building (the image itself always uses `deb.debian.org`) |
 | `ZOVELIS_SECURITY_MIRROR` | `https://security.debian.org/debian-security/` | Security mirror used while building |
 | `ZOVELIS_KEEP_CACHE=1` | off | Keep live-build's package cache between builds |
+| `ZOVELIS_LINTIAN` | `warn` | `strict`: lintian errors stop the package build (for releases); `off`: skip lintian |
 
 ### Building behind a restrictive proxy
 

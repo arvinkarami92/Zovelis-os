@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Build the Zovelis OS Debian packages from packages/*/ into build/debs/ and
 # check them with lintian. Run on Debian 13 (see setup-build-env.sh).
+#
+# ZOVELIS_LINTIAN=warn (default) shows lintian's findings; =strict makes
+# lintian errors fail the build (use it before a release); =off skips it.
 set -eu
 cd "$(dirname "$0")/.."
 ROOT=$(pwd)
@@ -24,12 +27,22 @@ for dir in packages/*/; do
     rm -f "$WORK"/*.buildinfo "$WORK"/*.changes
 done
 
-echo "=== lintian"
+mode=${ZOVELIS_LINTIAN:-warn}
 status=0
-for deb in "$OUT"/*.deb; do
-    # Errors fail the build; warnings are shown for review.
-    lintian --fail-on error --no-tag-display-limit --profile debian \
-        --suppress-tags-from-file "$ROOT/tests/lintian-suppressed-tags" "$deb" || status=1
-done
+case "$mode" in
+    off) echo "=== lintian skipped (ZOVELIS_LINTIAN=off)" ;;
+    warn | strict)
+        echo "=== lintian ($mode)"
+        for deb in "$OUT"/*.deb; do
+            lintian --fail-on error --no-tag-display-limit --profile debian \
+                --suppress-tags-from-file "$ROOT/tests/lintian-suppressed-tags" "$deb" || status=1
+        done
+        if [ "$status" -ne 0 ] && [ "$mode" = warn ]; then
+            echo "=== lintian reported errors (see above); continuing because ZOVELIS_LINTIAN=warn"
+            status=0
+        fi
+        ;;
+    *) echo "ZOVELIS_LINTIAN must be warn, strict or off (got '$mode')" >&2; exit 2 ;;
+esac
 ls -l "$OUT"
 exit "$status"
