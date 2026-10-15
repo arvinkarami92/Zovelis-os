@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Zovelis OS desktop. The image installs Recommends, as Debian does by
-# default (config/apt/zovelis-no-servers.pref keeps network servers out).
+# default (config/apt/zovelis-keep-out.pref keeps network servers out).
 # Everything listed here is marked "manually installed", so removing one
 # application later never removes others, and the packages each feature
 # needs stay even if a recommendation changes.

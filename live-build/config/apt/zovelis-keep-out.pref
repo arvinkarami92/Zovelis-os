@@ -3,8 +3,9 @@
 # users can still install any of these). The image installs Recommends, as
 # Debian does by default; these packages must not come in that way: servers
 # that would listen on the network or run in the background on every
-# Zovelis OS system. (If a package ever *depends* on one of them, the build
-# stops, which is the point.)
+# Zovelis OS system, and things that would replace the Zovelis look or
+# welcome. (If a package ever *depends* on one of them, the build stops,
+# which is the point.)
 
 Explanation: mail servers (pulled in through "default-mta" recommendations)
 Package: exim4-daemon-light exim4-daemon-heavy postfix sendmail-bin opensmtpd
@@ -27,5 +28,13 @@ Explanation: database server, phone pairing daemon), KDE's own welcome
 Explanation: wizard (the Zovelis Welcome app replaces it) and Debian's
 Explanation: package-usage reporting
 Package: akonadi-server kdeconnect plasma-welcome popularity-contest
+Pin: version *
+Pin-Priority: -1
+
+Explanation: Debian's artwork. desktop-base would switch the wallpaper of new
+Explanation: users to the Debian one (a Plasma update script) and add Debian
+Explanation: boot and login themes; the Debian login-screen themes recommend
+Explanation: or depend on it. Zovelis OS uses its own artwork throughout.
+Package: desktop-base sddm-theme-debian-breeze sddm-theme-debian-elarun sddm-theme-debian-maui
 Pin: version *
 Pin-Priority: -1
