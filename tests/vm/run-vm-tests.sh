@@ -60,7 +60,7 @@ for firmware in "$@"; do
     done
     sleep 90
     kill "$shooter" 2>/dev/null || true
-    $VMCTL screenshot --name "$name" "$dir/desktop.png" >/dev/null
+    $VMCTL screenshot --name "$name" "$dir/desktop.png" >/dev/null || echo "note: no desktop screenshot"
 
     if $VMCTL exec --name "$name" --stdin --timeout 600 -- /bin/sh -s live \
         <"$HERE/guest-checks.sh" >"$dir/guest-checks.log" 2>&1; then

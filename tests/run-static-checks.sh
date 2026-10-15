@@ -4,8 +4,9 @@
 # need a built ISO: syntax and lint checks, cross-package consistency,
 # colour contrast, polkit rule and desktop layout tests, the Welcome app's
 # unit and UI tests, renders of the installer slideshow, the splash screen
-# and the login-screen fallback, the installer helper script tests and the
-# trust checks of the build-chroot helper.
+# and the login-screen fallback, the installer helper script tests, the
+# trust checks of the build-chroot helper and the VM test tool (against a
+# stand-in for QEMU).
 #
 #   tests/run-static-checks.sh            (from the repository root)
 #
@@ -288,6 +289,7 @@ step "desktop layout script" check_layout_script
 step "installer helper scripts" sh tests/installer/test-helper-scripts.sh
 step "installer boot loader job" python3 tests/installer/test_zovelisbootloader.py
 step "build chroot trust chain" sh tests/dev/test-make-build-chroot.sh
+step "VM test tool (stand-in QEMU)" python3 tests/vm/test_vmctl.py
 step "welcome app (build, unit, UI)" check_welcome_app
 step "qmllint" check_qmllint
 step "installer slideshow render" check_slideshow

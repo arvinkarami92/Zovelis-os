@@ -22,6 +22,7 @@ system, and an installation test (automated checks, manual clicks).
 | desktop layout script | the taskbar layout run against a stand-in for Plasma's scripting API |
 | installer helper scripts | input validation and cleanup rules, on fake target systems |
 | build chroot trust chain | the development build-chroot helper runs debootstrap only on a Release file signed by a trusted key, with matching package index and debootstrap package (tested against a fake signed archive) |
+| VM test tool | `tests/vm/vmctl.py` against a stand-in for QEMU's monitor and guest agent: screenshots, keys, clicks, commands with input and output, clean shutdown through the guest agent |
 | Welcome app | C++ unit tests, the privileged helper's argument handling (including symlink attacks), every page rendered in light and dark, wide and narrow, failing on any QML warning |
 | qmllint, renders | installer slideshow, splash screen and login-screen fallback |
 

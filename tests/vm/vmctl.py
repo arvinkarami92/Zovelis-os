@@ -281,17 +281,34 @@ def _alive(d: Path) -> bool:
         return False
 
 
+def _guest_shutdown(d: Path) -> bool:
+    """Ask the guest agent to power the system off cleanly.
+
+    Preferred over the virtual power button: in a Plasma session that button
+    opens the logout screen and waits for a click. guest-shutdown sends no
+    reply when it works, so only the request is sent.
+    """
+    try:
+        qga = QGA(d / "qga.sock", timeout=5)
+        qga.conn.send({"execute": "guest-shutdown", "arguments": {"mode": "powerdown"}})
+        qga.close()
+        return True
+    except Exception:
+        return False
+
+
 def stop(args) -> int:
     d = vm_dir(args.name)
     if not _alive(d):
         print(f"VM {args.name} is not running")
         return 0
-    try:
-        qmp = QMP(d / "qmp.sock")
-        qmp.execute("quit" if args.force else "system_powerdown")
-        qmp.close()
-    except Exception as error:  # already gone
-        print(f"note: {error}")
+    if args.force or not _guest_shutdown(d):
+        try:
+            qmp = QMP(d / "qmp.sock")
+            qmp.execute("quit" if args.force else "system_powerdown")
+            qmp.close()
+        except Exception as error:  # already gone
+            print(f"note: {error}")
     deadline = time.time() + (5 if args.force else args.timeout)
     while time.time() < deadline and _alive(d):
         time.sleep(1)
