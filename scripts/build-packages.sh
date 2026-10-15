@@ -13,6 +13,10 @@ WORK=$ROOT/build/package-work
 
 ./scripts/fetch-flathub-remote.sh
 
+# No -dbgsym packages: everything in build/debs/ goes into the image.
+DEB_BUILD_OPTIONS="${DEB_BUILD_OPTIONS:+$DEB_BUILD_OPTIONS }noautodbgsym"
+export DEB_BUILD_OPTIONS
+
 rm -rf "$OUT" "$WORK"
 mkdir -p "$OUT" "$WORK"
 
