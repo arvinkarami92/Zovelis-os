@@ -55,7 +55,10 @@ jobs:
           set -o pipefail
           if ! ./scripts/build-in-container.sh all 2>&1 | tee build.log; then
             # Last lines of the log as an annotation on the run page.
-            tail -n 60 build.log | cut -c1-300 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}' > tail.txt
+            # (Carriage returns from progress output would end the
+            # annotation early, so they are removed.)
+            tail -n 60 build.log | tr -d '\r' | tr -c '[:print:]\n' ' ' | cut -c1-300 |
+              sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}' > tail.txt
             echo "::error title=ISO build failed::$(cat tail.txt)"
             exit 1
           fi

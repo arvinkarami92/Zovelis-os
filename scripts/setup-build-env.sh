@@ -13,7 +13,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install --yes --no-install-recommends \
     live-build debootstrap xorriso squashfs-tools mtools dosfstools \
-    debhelper devscripts dpkg-dev fakeroot lintian \
+    build-essential debhelper devscripts dpkg-dev fakeroot lintian \
     cmake ninja-build g++ pkgconf \
     qt6-base-dev qt6-declarative-dev qt6-declarative-dev-tools qt6-tools-dev-tools \
     qt6-qpa-plugins qt6-svg-plugins qml6-module-qtquick qml6-module-qtquick-controls \
