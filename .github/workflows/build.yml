@@ -50,7 +50,15 @@ jobs:
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
           df -h /
       - name: Build packages and ISO (Debian 13 container)
-        run: ./scripts/build-in-container.sh all
+        shell: bash
+        run: |
+          set -o pipefail
+          if ! ./scripts/build-in-container.sh all 2>&1 | tee build.log; then
+            # Last lines of the log as an annotation on the run page.
+            tail -n 60 build.log | cut -c1-300 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}' > tail.txt
+            echo "::error title=ISO build failed::$(cat tail.txt)"
+            exit 1
+          fi
       - name: Hand the build results to the runner's user
         # The container build runs as root; the tests below write into build/.
         run: |
