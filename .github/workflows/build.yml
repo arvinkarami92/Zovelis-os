@@ -22,8 +22,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build tools
         run: ./scripts/setup-build-env.sh
+      - name: Calamares 3.3.14 sources (installer configuration schemas)
+        run: |
+          apt-get install -y --no-install-recommends git
+          git clone --quiet --depth 1 --branch v3.3.14 https://github.com/calamares/calamares.git /opt/calamares
       - name: Static checks and unit tests
         run: ./tests/run-static-checks.sh
+        env:
+          CALAMARES_SRC: /opt/calamares
       - uses: actions/upload-artifact@v4
         if: always()
         with:
