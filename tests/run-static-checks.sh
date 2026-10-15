@@ -38,6 +38,10 @@ step() {
     else
         echo "FAIL  $name (log: $log)"
         sed 's/^/      /' "$log" | tail -n 25
+        if [ -n "${GITHUB_ACTIONS:-}" ]; then
+            # Shown as an annotation on the GitHub run page.
+            printf '::error title=%s::%s\n' "$name" "$(tail -n 15 "$log" | tr '\n' '|' | cut -c1-900)"
+        fi
         failed=$((failed + 1))
     fi
 }

@@ -37,7 +37,10 @@ jobs:
           path: build/test-results
 
   iso:
+    # Build the ISO even when a static check fails, so there is an image to
+    # try; the checks job still shows the failure.
     needs: checks
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-24.04
     timeout-minutes: 240
     steps:
