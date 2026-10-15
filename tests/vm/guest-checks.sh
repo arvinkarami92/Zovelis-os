@@ -97,7 +97,7 @@ for p in firmware-iwlwifi firmware-realtek firmware-sof-signed firmware-cirrus f
     intel-microcode amd64-microcode; do
     check "firmware installed: $p" installed "$p"
 done
-check "no network-switch firmware" sh -c '! dpkg-query -W -f "\${db:Status-Status}" firmware-marvell-prestera 2>/dev/null | grep -q installed'
+check "no network-switch firmware" sh -c '[ "$(dpkg-query -W -f "\${db:Status-Status}" firmware-marvell-prestera 2>/dev/null)" != installed ]'
 check "removable storage service (udisks2)" systemctl is-active udisks2
 info "network: $(nmcli -t -f STATE,CONNECTIVITY general 2>/dev/null)"
 
@@ -133,7 +133,7 @@ info "processes: $(ps -e --no-headers | wc -l)"
 if [ "$mode" = installed ]; then
     # --- Installed system only -------------------------------------------------
     for p in live-boot live-config live-tools calamares calamares-settings-zovelis; do
-        check "live/installer package removed: $p" sh -c "! dpkg-query -W -f '\${db:Status-Status}' $p 2>/dev/null | grep -q installed"
+        check "live/installer package removed: $p" sh -c "[ \"\$(dpkg-query -W -f '\${db:Status-Status}' $p 2>/dev/null)\" != installed ]"
     done
     check "installer GRUB pool removed" test ! -e /usr/share/zovelis-installer
     check "no password-less sudo" sh -c '! grep -rEqs "^[^#]*NOPASSWD" /etc/sudoers /etc/sudoers.d'

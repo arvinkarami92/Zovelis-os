@@ -18,6 +18,11 @@ check() {
 installed() {
     [ "$(dpkg-query -W -f '${db:Status-Status}' "$1" 2>/dev/null)" = installed ]
 }
+# (dpkg reports packages it merely knows about as "not-installed": compare
+# the whole word.)
+absent() {
+    ! installed "$1"
+}
 
 check "os-release names Zovelis OS" grep -qx 'ID=zovelis' /etc/os-release
 check "Debian's os-release is kept as a diversion" test -f /usr/lib/os-release.debian
@@ -51,22 +56,34 @@ check "file manager installed" installed dolphin
 check "terminal installed" installed konsole
 check "settings app installed" installed systemsettings
 check "software center installed" installed plasma-discover
-check "no SSH server" sh -c '! dpkg-query -W -f "\${db:Status-Status}" openssh-server 2>/dev/null | grep -q installed'
+check "no SSH server" absent openssh-server
 for server in exim4-daemon-light exim4-daemon-heavy postfix rpcbind cups-browsed akonadi-server kdeconnect \
     plasma-welcome popularity-contest desktop-base sddm-theme-debian-breeze; do
-    check "no $server" sh -c "! dpkg-query -W -f '\${db:Status-Status}' $server 2>/dev/null | grep -q installed"
+    check "no $server" absent "$server"
 done
 check "Wi-Fi support (wpasupplicant)" installed wpasupplicant
 check "Wi-Fi channel rules (wireless-regdb)" installed wireless-regdb
 check "login sessions registered with logind" installed libpam-systemd
 check "printing filters" installed cups-filters
 check "laptop speaker firmware (Cirrus Logic)" installed firmware-cirrus
-check "no network-switch firmware" sh -c "! dpkg-query -W -f '\${db:Status-Status}' firmware-marvell-prestera 2>/dev/null | grep -q installed"
+check "no network-switch firmware" absent firmware-marvell-prestera
 check "live user can be created (user-setup)" installed user-setup
 check "no password-less sudo rules" sh -c '! grep -rEqs "^[^#]*NOPASSWD" /etc/sudoers /etc/sudoers.d'
 check "machine-id is empty" sh -c '[ ! -s /etc/machine-id ]'
 
 if [ "$failures" -ne 0 ]; then
+    # Details for the build log ("D:" lines), to find the cause quickly.
+    oneline() { tr '\n' ';' | cut -c1-400; }
+    echo "D: os-release: $(ls -l /etc/os-release /usr/lib/os-release* 2>&1 | oneline)"
+    echo "D: os-release IDs: $(grep -H '^ID=' /etc/os-release /usr/lib/os-release* 2>&1 | oneline)"
+    echo "D: diversions: $(dpkg-divert --list '*os-release*' 2>&1 | oneline)"
+    echo "D: zovelis-base: $(dpkg-query -W -f '${db:Status-Status} ${Version}' zovelis-base 2>&1)"
+    echo "D: preferences: $(ls -l /etc/apt/preferences /etc/apt/preferences.d 2>&1 | oneline)"
+    echo "D: boot splash: $(plymouth-set-default-theme 2>&1 | oneline) default.plymouth=$(readlink -f /usr/share/plymouth/themes/default.plymouth 2>&1)"
+    for p in openssh-server cups-browsed kdeconnect plasma-welcome desktop-base firmware-marvell-prestera; do
+        installed "$p" || continue
+        echo "D: $p is installed; $(apt-cache policy "$p" 2>&1 | sed -n '2,4p' | oneline) needed by: $(apt-cache rdepends --installed --no-suggests --no-enhances "$p" 2>/dev/null | tail -n +3 | tr '\n' ' ' | cut -c1-300)"
+    done
     echo "E: Zovelis: $failures check(s) failed"
     exit 1
 fi

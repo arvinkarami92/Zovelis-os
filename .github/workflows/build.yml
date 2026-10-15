@@ -64,8 +64,8 @@ jobs:
                 sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}' > note.txt
               echo "::error title=$1::$(cat note.txt)"
             }
-            grep -E '^(E:|W: Zovelis|P: .*fail)|[Ee]rror|FAILED|returned .*exit|Unable to|ERROR' build.log |
-              grep -v '^Get:' | tail -n 25 | annotate "ISO build failed: error lines"
+            grep -E '^(E:|D:|W: Zovelis|P: .*fail)|[Ee]rror|FAILED|returned .*exit|Unable to|ERROR' build.log |
+              grep -v -E '^(Get:|Selecting|Preparing|Unpacking|Setting up)' | tail -n 30 | annotate "ISO build failed: error lines"
             tail -n 25 build.log | annotate "ISO build failed: end of the log"
             exit 1
           fi
