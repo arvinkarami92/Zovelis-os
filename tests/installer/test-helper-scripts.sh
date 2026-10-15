@@ -196,8 +196,80 @@ check "live login: nothing changes without automatic login" \
 rm "$fakeroot_dir/usr/share/xsessions/plasmax11.desktop"
 check "live login: nomodeset without an X11 session keeps Wayland" \
     "[ \"\$(live_session '[Autologin]\nUser=zovelis\nSession=\n' 'nomodeset')\" = Session=plasma.desktop ]"
+
+# --- live-config component: live user's desktop settings ---------------------
+component=$SCRIPTS/../data/live-config/0087-zovelis-live-session
+lr=$tmp/liveroot2
+reset_live_root() {  # reset_live_root AUTOLOGIN-USER: a fresh live user home
+    rm -rf "$lr"
+    mkdir -p "$lr/etc" "$lr/home/zovelis"
+    printf 'root:x:0:0:root:/root:/bin/bash\nzovelis:x:1000:1000:Zovelis:/home/zovelis:/bin/bash\n' > "$lr/etc/passwd"
+    printf '[Autologin]\nUser=%s\nSession=plasma.desktop\n' "$1" > "$lr/etc/sddm.conf"
+    chown 1000:1000 "$lr/home/zovelis"
+}
+cfg=$lr/home/zovelis/.config
+reset_live_root zovelis
+expect 0 "live settings: component runs for the live user" "$component" "$lr"
+check "live settings: no automatic screen lock" "grep -qx 'Autolock=false' '$cfg/kscreenlockerrc' && grep -qx 'LockOnResume=false' '$cfg/kscreenlockerrc'"
+check "live settings: KDE Wallet off" "grep -qx 'Enabled=false' '$cfg/kwalletrc'"
+check "live settings: files belong to the live user" "[ \"\$(stat -c %u:%g:%a '$cfg' '$cfg/kscreenlockerrc' '$cfg/kwalletrc' | tr '\n' ' ')\" = '1000:1000:700 1000:1000:600 1000:1000:600 ' ]"
+printf '[Daemon]\nAutolock=true\n' > "$cfg/kscreenlockerrc"
+expect 0 "live settings: runs again" "$component" "$lr"
+check "live settings: existing settings are kept" "grep -qx 'Autolock=true' '$cfg/kscreenlockerrc'"
+reset_live_root ""
+expect 0 "live settings: without automatic login" "$component" "$lr"
+check "live settings: nothing written without automatic login" "[ ! -e '$cfg' ]"
+reset_live_root '../root'
+expect 0 "live settings: odd user name" "$component" "$lr"
+check "live settings: nothing written for an odd user name" "[ ! -e '$cfg' ] && [ ! -e '$lr/root/.config' ]"
+reset_live_root zovelis
+sed -i 's|/home/zovelis|/root|' "$lr/etc/passwd"
+expect 0 "live settings: unexpected home directory" "$component" "$lr"
+check "live settings: nothing written outside /home/<user>" "[ ! -e '$cfg' ] && [ ! -e '$lr/root/.config' ]"
+reset_live_root zovelis
+mkdir -p "$tmp/elsewhere"
+ln -s "$tmp/elsewhere" "$cfg"
+expect 0 "live settings: ~/.config is a symbolic link" "$component" "$lr"
+check "live settings: symbolic link not followed" "[ -z \"\$(ls -A '$tmp/elsewhere')\" ]"
+reset_live_root zovelis
+mkdir -m 0700 "$cfg"
+ln -s "$tmp/elsewhere/target" "$cfg/kwalletrc"
+expect 0 "live settings: a settings file is a symbolic link" "$component" "$lr"
+check "live settings: link target not created" "[ ! -e '$tmp/elsewhere/target' ] && [ -L '$cfg/kwalletrc' ]"
+check "live settings: the other file is still written" "grep -qx 'Autolock=false' '$cfg/kscreenlockerrc'"
 expect 1 "run-calamares: refuses to run without root" setpriv --reuid=65534 --regid=65534 --clear-groups "$SCRIPTS/run-calamares"
 expect 1 "run-calamares: refuses outside the live system" "$SCRIPTS/run-calamares"
+# Stand-ins for calamares and systemd-inhibit, put first in run-calamares'
+# fixed PATH (/usr/sbin) inside a private mount namespace that also pretends
+# to be the live system.
+stubs=$tmp/stubs
+mkdir -p "$stubs"
+cat > "$stubs/systemd-inhibit" <<EOF
+#!/bin/sh
+echo "inhibit \$*" >> '$tmp/run.log'
+[ -e '$tmp/inhibit-broken' ] && exit 1
+while [ \$# -gt 0 ]; do case \$1 in --*) shift ;; *) break ;; esac; done
+exec "\$@"
+EOF
+cat > "$stubs/calamares" <<EOF
+#!/bin/sh
+echo "calamares runtime-dir-private=\$([ "\$(stat -c %a "\$XDG_RUNTIME_DIR")" = 700 ] && echo yes) qpa=\$QT_QPA_PLATFORM" >> '$tmp/run.log'
+exit 7
+EOF
+chmod 0755 "$stubs/systemd-inhibit" "$stubs/calamares"
+run_installer() {
+    : > "$tmp/run.log"
+    unshare --mount sh -c "mount -t tmpfs none /run && mkdir -p /run/live/medium &&
+        mount --bind '$stubs' /usr/sbin && DISPLAY=:0 '$SCRIPTS/run-calamares'"
+}
+expect 7 "run-calamares: passes on the installer's exit status" run_installer
+check "run-calamares: sleep blocked while the installer runs" \
+    "grep -q '^inhibit --what=sleep --mode=block .* calamares\$' '$tmp/run.log' && grep -q '^calamares runtime-dir-private=yes qpa=xcb\$' '$tmp/run.log'"
+: > "$tmp/inhibit-broken"
+expect 7 "run-calamares: starts the installer even if sleep cannot be blocked" run_installer
+check "run-calamares: installer started without the sleep lock" \
+    "! grep -q '^inhibit .* calamares\$' '$tmp/run.log' && grep -q '^calamares ' '$tmp/run.log'"
+rm "$tmp/inhibit-broken"
 expect 1 "zovelis-install: refuses outside the live system" env -u DISPLAY "$SCRIPTS/zovelis-install"
 
 if [ "$failures" -ne 0 ]; then

@@ -1,0 +1,88 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# live-config component (runs after live-config's 0030-user-setup, which
+# creates the live user, and 0085-sddm, which sets up its automatic login):
+# desktop settings that only make sense for the live user.
+#
+#   * No automatic screen lock. Nobody is told the live user's password, and
+#     a screen that locks itself while the installer copies files (or after
+#     the computer slept) would leave people stuck.
+#   * KDE Wallet off. Without a login password the wallet cannot be opened
+#     automatically, so the first Wi-Fi password would bring up a dialog
+#     asking to create a wallet. Without the wallet, NetworkManager keeps the
+#     password itself (in the live system's memory).
+#
+# Only files in the live user's home, in the live system's RAM overlay, are
+# written. The installer copies the unchanged image, so installed systems
+# lock the screen and use the wallet as usual. Settings the user already has
+# are never overwritten.
+# (Part of the live system only: the installer removes this package.)
+
+# live-config runs this without arguments; the tests pass a directory that
+# stands in for /.
+root=${1:-}
+
+log() { echo "0087-zovelis-live-session: $*" >&2; }
+
+# The live user is the one SDDM logs in automatically; without automatic
+# login ("noautologin" on the kernel command line) people log in with the
+# password themselves, and nothing is changed.
+conf=$root/etc/sddm.conf
+[ -f "$conf" ] || exit 0
+user=$(sed -n 's/^User=//p' "$conf" | head -n 1)
+[ -n "$user" ] || exit 0
+case $user in
+    -* | *[!a-z0-9_-]*)
+        log "unexpected user name '$user'; leaving it alone"
+        exit 0
+        ;;
+esac
+
+# uid:gid:home from the password database of the (live) system.
+entry=$(awk -F: -v u="$user" '$1 == u { print $3 ":" $4 ":" $6; exit }' "$root/etc/passwd")
+[ -n "$entry" ] || exit 0
+uid=${entry%%:*}
+rest=${entry#*:}
+gid=${rest%%:*}
+home=${rest#*:}
+# live-config creates the live user with this home directory.
+if [ "$home" != "/home/$user" ]; then
+    log "unexpected home directory '$home'; leaving it alone"
+    exit 0
+fi
+case $uid:$gid in
+    *[!0-9:]* | :* | *:) log "unexpected user or group id; leaving it alone"; exit 0 ;;
+esac
+dir=$root$home
+if [ ! -d "$dir" ] || [ -L "$dir" ]; then
+    exit 0
+fi
+
+config=$dir/.config
+if [ -L "$config" ]; then
+    log "$home/.config is a symbolic link; leaving it alone"
+    exit 0
+fi
+if [ ! -d "$config" ]; then
+    mkdir -m 0700 "$config" || exit 1
+    chown "$uid:$gid" "$config" || exit 1
+fi
+
+# write_config FILE CONTENT: create FILE in ~/.config unless it exists.
+write_config() {
+    file=$config/$1
+    if [ -e "$file" ] || [ -L "$file" ]; then
+        return 0
+    fi
+    printf '%s\n' "$2" > "$file" || return 1
+    chmod 0600 "$file" && chown "$uid:$gid" "$file"
+}
+
+status=0
+write_config kscreenlockerrc '[Daemon]
+Autolock=false
+LockOnResume=false' || status=1
+write_config kwalletrc '[Wallet]
+Enabled=false
+First Use=false' || status=1
+exit "$status"

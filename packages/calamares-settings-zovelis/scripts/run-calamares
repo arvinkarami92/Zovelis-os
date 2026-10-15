@@ -39,5 +39,18 @@ export HOME=/root
 
 cd /
 status=0
-calamares || status=$?
+# Keep the computer from going to sleep while the installer is open, so an
+# installation is never interrupted half-way (a USB stick may not come back
+# after sleep). Calamares 3.3.14 tries to do this itself, but its request is
+# never sent. Restarting and shutting down still work. If the sleep lock
+# cannot be taken (no logind), the installer starts anyway.
+no_sleep() {
+    systemd-inhibit --what=sleep --mode=block --who="Zovelis OS installer" \
+        --why="Installing Zovelis OS" "$@"
+}
+if command -v systemd-inhibit >/dev/null 2>&1 && no_sleep true >/dev/null 2>&1; then
+    no_sleep calamares || status=$?
+else
+    calamares || status=$?
+fi
 exit "$status"

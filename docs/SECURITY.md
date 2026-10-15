@@ -36,6 +36,13 @@ mechanism.
   removes it, the live-system packages and the installer itself from the new
   system; `cleanup-target` stops the installation if any of them, or any
   `NOPASSWD` sudo rule, is left behind.
+* The live session does not lock the screen by itself and does not use the
+  KDE Wallet: it holds no personal data, and its user's password is not
+  shown anywhere, so a locked screen would only shut people out (for
+  example halfway through an installation). This is written into the live
+  user's home in the live system's memory only; installed systems lock the
+  screen after 5 minutes and when waking from sleep, and keep passwords in
+  the wallet, unlocked with the login password.
 
 ## Privacy
 
@@ -88,6 +95,11 @@ Findings fixed during development:
   `EFI/zovelis`. The installer now gives `EFI/BOOT` the same file.
 * An empty password could be accepted if weak passwords were allowed;
   passwords are now required to have at least 6 characters.
+* Calamares 3.3.14 means to keep the computer awake during an installation,
+  but its request is never sent (an inverted check in its sleep inhibitor):
+  a laptop could go to sleep halfway through, and a USB stick does not
+  always come back after sleep. `run-calamares` now holds a logind sleep
+  lock (`systemd-inhibit`) while the installer is open.
 
 ## Known limitations
 

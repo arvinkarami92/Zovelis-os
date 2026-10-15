@@ -44,7 +44,14 @@ Debian and keeps the maintenance work small.
    automatically after 10 seconds.
 2. **Live system.** `live-boot` mounts the compressed image
    (`live/filesystem.squashfs`, zstd) with a RAM overlay; `live-config`
-   creates the `zovelis` live user and logs it in automatically.
+   creates the `zovelis` live user and logs it in automatically. Two
+   live-config components from the installer package finish the live
+   session: `0086-zovelis-sddm` picks the Plasma session for the automatic
+   login (Wayland; X11 with "safe graphics"), and `0087-zovelis-live-session`
+   turns off automatic screen locking and the KDE Wallet for the live user
+   only (nobody knows that user's password, and the wallet could not be
+   opened without one). While the installer is open, `run-calamares` keeps
+   the computer from sleeping.
 3. **Plymouth** shows the Zovelis splash (navy background, logo, spinner).
 4. **SDDM** shows the Zovelis login screen: Plasma's Breeze login screen
    (loaded from its own directory so it always matches the installed Plasma)
