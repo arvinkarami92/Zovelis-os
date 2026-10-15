@@ -49,6 +49,16 @@ function Panel() {
     this.location = "top";
     this.formFactor = "horizontal";
     this.screen = 0;
+    // Plasma 6.3 (shell/panelview.cpp): a "fill" panel spans the screen edge
+    // and ignores minimumLength/maximumLength; only "custom" uses them.
+    this.lengthMode = "fill";
+    this.lengthOn = (screenWidth) => {
+        if (this.lengthMode === "fill") {
+            return screenWidth;
+        }
+        assert.strictEqual(this.lengthMode, "custom", `unexpected lengthMode ${this.lengthMode}`);
+        return Math.min(this.maximumLength, screenWidth);
+    };
     this.addWidget = (name) => {
         assert.ok(knownWidgets.has(name), `unknown widget ${name}`);
         const w = makeWidget(name);
@@ -119,15 +129,19 @@ test("input method indicator for Japanese", () => {
     assert.ok(panel.widgets.some(w => w.type === "org.kde.plasma.kimpanel"));
 });
 
-test("ultra-wide screens get a centred taskbar", () => {
+test("ultra-wide screens get a centred taskbar as wide as 21:9", () => {
     const { panels: [panel] } = run("en_US", { x: 0, y: 0, width: 5120, height: 1440 });
     assert.strictEqual(panel.alignment, "center");
-    assert.strictEqual(panel.maximumLength, Math.ceil(1440 * 21 / 9));
+    assert.strictEqual(panel.lengthMode, "custom");
+    assert.strictEqual(panel.minimumLength, Math.ceil(1440 * 21 / 9));
+    assert.strictEqual(panel.lengthOn(5120), Math.ceil(1440 * 21 / 9));
 });
 
 test("normal screens keep the full-width taskbar", () => {
     const { panels: [panel] } = run("en_US", { x: 0, y: 0, width: 1366, height: 768 });
     assert.strictEqual(panel.alignment, undefined);
+    assert.strictEqual(panel.lengthMode, "fill");
+    assert.strictEqual(panel.lengthOn(1366), 1366);
 });
 
 if (failures) {

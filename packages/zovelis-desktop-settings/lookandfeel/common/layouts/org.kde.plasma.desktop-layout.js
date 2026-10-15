@@ -19,12 +19,15 @@ panel.location = "bottom";
 panel.height = 2 * Math.floor(gridUnit * 2.5 / 2);
 
 // On very wide screens, keep the taskbar at most as wide as a 21:9 monitor
-// so the menu and the clock do not end up far apart.
+// so the menu and the clock do not end up far apart. (Plasma only applies
+// the minimum and maximum length to panels with a custom length; the default
+// "fill" mode always spans the whole screen edge.)
 var maximumAspectRatio = 21 / 9;
 if (panel.formFactor === "horizontal") {
     var geo = screenGeometry(panel.screen);
     var maximumWidth = Math.ceil(geo.height * maximumAspectRatio);
     if (geo.width > maximumWidth) {
+        panel.lengthMode = "custom";
         panel.alignment = "center";
         panel.minimumLength = maximumWidth;
         panel.maximumLength = maximumWidth;
