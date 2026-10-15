@@ -56,12 +56,17 @@ jobs:
           # Docker: its daemon is rootful, so the build container can create
           # the device nodes live-build needs (rootless Podman cannot).
           if ! CONTAINER_ENGINE=docker ./scripts/build-in-container.sh all 2>&1 | tee build.log; then
-            # Last lines of the log as an annotation on the run page.
-            # (Carriage returns from progress output would end the
-            # annotation early, so they are removed.)
-            tail -n 60 build.log | tr -d '\r' | tr -c '[:print:]\n' ' ' | cut -c1-300 |
-              sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}' > tail.txt
-            echo "::error title=ISO build failed::$(cat tail.txt)"
+            # Error lines and the end of the log as annotations on the run
+            # page (GitHub keeps about 4 KB of each). Carriage returns from
+            # progress output would end an annotation early: removed.
+            annotate() {  # annotate TITLE < text
+              tr -d '\r' | tr -c '[:print:]\n' ' ' | cut -c1-180 | head -c 3800 |
+                sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}' > note.txt
+              echo "::error title=$1::$(cat note.txt)"
+            }
+            grep -E '^(E:|W: Zovelis|P: .*fail)|[Ee]rror|FAILED|returned .*exit|Unable to|ERROR' build.log |
+              grep -v '^Get:' | tail -n 25 | annotate "ISO build failed: error lines"
+            tail -n 25 build.log | annotate "ISO build failed: end of the log"
             exit 1
           fi
       - name: Hand the build results to the runner's user
