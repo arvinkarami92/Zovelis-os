@@ -1,6 +1,17 @@
 #!/bin/sh
 # SPDX-License-Identifier: GPL-3.0-or-later
+# Run by "lb build". The stages run one by one (instead of "lb build
+# noauto") so that auto/finish-chroot can finish off the root file system
+# after "lb chroot" and before "lb binary" packs it into the image.
 set -e
-lb build noauto "${@}" 2>&1 | tee build.log
-# tee hides lb's exit status; fail if no image was produced.
+(
+    set -e
+    lb bootstrap "$@"
+    lb chroot "$@"
+    ./auto/finish-chroot
+    lb installer "$@"
+    lb binary "$@"
+    lb source "$@"
+) 2>&1 | tee build.log
+# tee hides the exit status; fail if no image was produced.
 ls ./*.iso >/dev/null 2>&1

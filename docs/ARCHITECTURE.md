@@ -155,7 +155,10 @@ welcome wizard, popularity-contest, network-switch firmware and Debian's
 artwork (`desktop-base`, which would switch new users to the Debian
 wallpaper) out), our packages from `config/packages.chroot`, hooks that
 switch the firewall and automatic updates on, store the GRUB packages for
-the installer and verify the image, and Zovelis boot menus. The installed
+the installer and verify the image, and Zovelis boot menus. `auto/build` runs
+live-build's stages one by one so that `auto/finish-chroot` can restore
+Zovelis' `/etc/os-release` (live-build keeps its own in place while it
+builds) before the root file system is packed. The installed
 system's package sources have no `deb-src` lines (source packages are not
 needed on a desktop, and `apt update` stays smaller). The result is
 `build/out/zovelis-os-<version>-amd64.iso` plus its package list and

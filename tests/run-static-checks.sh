@@ -306,6 +306,7 @@ step "installer helper scripts" sh tests/installer/test-helper-scripts.sh
 step "installer boot loader job" python3 tests/installer/test_zovelisbootloader.py
 step "build chroot trust chain" sh tests/dev/test-make-build-chroot.sh
 step "VM test tool (stand-in QEMU)" python3 tests/vm/test_vmctl.py
+step "image root file system finish (os-release)" sh tests/live-build/test-finish-chroot.sh
 step "welcome app (build, unit, UI)" check_welcome_app
 step "qmllint" check_qmllint
 step "installer slideshow render" check_slideshow

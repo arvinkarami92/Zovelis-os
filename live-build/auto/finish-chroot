@@ -1,0 +1,30 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Run by auto/build between "lb chroot" and "lb binary": last touches to the
+# finished root file system (chroot/) before it is packed into the image.
+set -eu
+c=chroot
+[ -d "$c/etc" ] || { echo "E: Zovelis: no root file system in $(pwd)/$c" >&2; exit 1; }
+
+# /etc/os-release. Debian's base-files makes it a symlink to
+# ../usr/lib/os-release, which zovelis-base provides (diverting Debian's).
+# While it builds, live-build (trixie) puts its own /etc/os-release in its
+# place with a local diversion to /etc/os-release.debootstrap; live-build
+# 1:20250505+deb13u1 removes that diversion again, earlier versions left it
+# in the image and on every installed system (Debian bug #1111039). Remove
+# whatever is left and restore the symlink.
+echo "P: Zovelis: /etc/os-release was: $(ls -l "$c"/etc/os-release* 2>&1 | tr '\n' ';')"
+if chroot "$c" dpkg-divert --list /etc/os-release | grep -q .; then
+    echo "P: Zovelis: removing the diversion of /etc/os-release: $(chroot "$c" dpkg-divert --list /etc/os-release)"
+    rm -f "$c/etc/os-release"
+    chroot "$c" dpkg-divert --rename --remove /etc/os-release
+fi
+if [ "$(readlink "$c/etc/os-release" || true)" != ../usr/lib/os-release ]; then
+    rm -f "$c/etc/os-release"
+    ln -s ../usr/lib/os-release "$c/etc/os-release"
+fi
+if ! grep -qx 'ID=zovelis' "$c/etc/os-release"; then
+    echo "E: Zovelis: /etc/os-release does not describe Zovelis OS" >&2
+    exit 1
+fi
+echo "P: Zovelis: /etc/os-release: $(grep '^PRETTY_NAME=' "$c/etc/os-release")"
