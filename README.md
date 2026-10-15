@@ -74,8 +74,9 @@ sudo ./scripts/build-iso.sh
 ```
 
 The ISO is written to `build/out/`. A build needs about 25 GB of free disk
-space and internet access to `deb.debian.org`, `security.debian.org` and
-`dl.flathub.org`. See [docs/BUILDING.md](docs/BUILDING.md).
+space and internet access to `deb.debian.org` and `security.debian.org`
+(Flathub's remote description is part of the source tree). See
+[docs/BUILDING.md](docs/BUILDING.md).
 
 ## Testing
 
