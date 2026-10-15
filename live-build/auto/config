@@ -35,7 +35,7 @@ lb config noauto \
     --iso-application "Zovelis OS $VERSION" \
     --iso-publisher "Zovelis OS Developers" \
     --iso-volume "ZOVELIS_${VERSION}" \
-    --image-name "zovelis-os-${VERSION}-amd64" \
+    --image-name "zovelis-os-${VERSION}" \
     --bootappend-live "boot=live components quiet splash username=zovelis user-fullname=Zovelis hostname=zovelis" \
     --checksums sha256 \
     --zsync false \
