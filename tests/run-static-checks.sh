@@ -97,9 +97,13 @@ ref = sys.argv[1]
 instance_of = {"shellprocess-cleanup": "shellprocess"}
 # Upstream schemas lag behind the code for these keys (verified in the
 # Calamares 3.3 sources: lists are accepted, autologinGroup is optional).
+# GRUB_DEFAULT: the schema wants a string, but Calamares reads any number-like
+# value as a number, quoted or not, and grubcfg writes str(value) anyway; a
+# quoted "0" would only look different (see check_calamares_yaml.py).
 known_outdated = {("users.conf", "'autologinGroup' is a required property"),
                   ("users.conf", "'sudoersGroup' is a required property"),
-                  ("welcome.conf", "is not of type 'string'")}
+                  ("welcome.conf", "is not of type 'string'"),
+                  ("grubcfg.conf", "0 is not of type 'string'")}
 bad = 0
 for f in sorted(glob.glob("packages/calamares-settings-zovelis/calamares/modules/*.conf")):
     name = f.rsplit("/", 1)[1]
@@ -274,6 +278,7 @@ step "shellcheck" check_shellcheck
 step "python syntax" check_python
 step "JSON and YAML" check_data_files
 step "installer config schemas" check_calamares_schemas
+step "installer YAML as Calamares reads it" python3 tests/installer/check_calamares_yaml.py
 step "desktop entries" check_desktop_files
 step "XML (polkit, AppStream)" check_xml
 step "colour contrast (WCAG)" check_contrast

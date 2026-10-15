@@ -13,12 +13,15 @@ system, and an installation test (automated checks, manual clicks).
 | --- | --- |
 | shell syntax, shellcheck | errors in the build hooks, installer helpers, maintainer scripts |
 | JSON/YAML, installer schemas | broken configuration (validated against Calamares' own schemas) |
+| installer YAML as Calamares reads it | values whose meaning changes in Calamares, which types every value by its text: a quoted `"1.0"` becomes the number 1, `yes`/`no` stay text (`tests/installer/check_calamares_yaml.py`) |
+| installer boot loader job | the Python job module that runs the boot loader helpers (UEFI, BIOS, "Do not install a boot loader", helper failures) |
 | desktop entries, XML | invalid launchers, polkit policies, AppStream metadata |
 | colour contrast | text that fails WCAG 2.x contrast (4.5:1 text, 3:1 indicators) in either theme |
 | consistency (`tests/check_consistency.py`) | settings that must agree across packages: boot loader names, installer steps and their order, packages removed vs. packages present, theme ids, required splash images, security defaults, the Flathub key against its pinned fingerprint |
 | installer polkit rule | the live-only "no password" rule never applies outside the live system |
 | desktop layout script | the taskbar layout run against a stand-in for Plasma's scripting API |
 | installer helper scripts | input validation and cleanup rules, on fake target systems |
+| build chroot trust chain | the development build-chroot helper runs debootstrap only on a Release file signed by a trusted key, with matching package index and debootstrap package (tested against a fake signed archive) |
 | Welcome app | C++ unit tests, the privileged helper's argument handling (including symlink attacks), every page rendered in light and dark, wide and narrow, failing on any QML warning |
 | qmllint, renders | installer slideshow, splash screen and login-screen fallback |
 
