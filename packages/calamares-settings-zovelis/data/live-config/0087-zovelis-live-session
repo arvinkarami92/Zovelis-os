@@ -4,9 +4,11 @@
 # creates the live user, and 0085-sddm, which sets up its automatic login):
 # desktop settings that only make sense for the live user.
 #
-#   * No automatic screen lock. Nobody is told the live user's password, and
-#     a screen that locks itself while the installer copies files (or after
-#     the computer slept) would leave people stuck.
+#   * No screen lock that needs a password. Nobody is told the live user's
+#     password, and a screen that locks itself while the installer copies
+#     files, after the computer slept, or because someone pressed Meta+L
+#     out of habit (Windows+L) would leave people stuck. The screen still
+#     blanks; any key or mouse movement brings the desktop back.
 #   * KDE Wallet off. Without a login password the wallet cannot be opened
 #     automatically, so the first Wi-Fi password would bring up a dialog
 #     asking to create a wallet. Without the wallet, NetworkManager keeps the
@@ -81,7 +83,8 @@ write_config() {
 status=0
 write_config kscreenlockerrc '[Daemon]
 Autolock=false
-LockOnResume=false' || status=1
+LockOnResume=false
+RequirePassword=false' || status=1
 write_config kwalletrc '[Wallet]
 Enabled=false
 First Use=false' || status=1

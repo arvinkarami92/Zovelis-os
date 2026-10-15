@@ -48,8 +48,9 @@ Debian and keeps the maintenance work small.
    live-config components from the installer package finish the live
    session: `0086-zovelis-sddm` picks the Plasma session for the automatic
    login (Wayland; X11 with "safe graphics"), and `0087-zovelis-live-session`
-   turns off automatic screen locking and the KDE Wallet for the live user
-   only (nobody knows that user's password, and the wallet could not be
+   makes the screen lock password-free (it no longer locks by itself, and
+   Meta+L only blanks the screen) and turns off the KDE Wallet, for the live
+   user only (nobody knows that user's password, and the wallet could not be
    opened without one). While the installer is open, `run-calamares` keeps
    the computer from sleeping.
 3. **Plymouth** shows the Zovelis splash (navy background, logo, spinner).

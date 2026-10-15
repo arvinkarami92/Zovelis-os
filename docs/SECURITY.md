@@ -36,9 +36,10 @@ mechanism.
   removes it, the live-system packages and the installer itself from the new
   system; `cleanup-target` stops the installation if any of them, or any
   `NOPASSWD` sudo rule, is left behind.
-* The live session does not lock the screen by itself and does not use the
-  KDE Wallet: it holds no personal data, and its user's password is not
-  shown anywhere, so a locked screen would only shut people out (for
+* The live session's screen lock never asks for a password (it does not
+  lock by itself, and Meta+L only blanks the screen), and the KDE Wallet is
+  off: the live system holds no personal data, and its user's password is
+  not shown anywhere, so a locked screen would only shut people out (for
   example halfway through an installation). This is written into the live
   user's home in the live system's memory only; installed systems lock the
   screen after 5 minutes and when waking from sleep, and keep passwords in

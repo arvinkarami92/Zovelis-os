@@ -74,6 +74,8 @@ boot entry and the GRUB update settings (for BIOS: the GRUB install device).
 Manual checklist for each installation test:
 
 - [ ] Installer starts from the desktop icon and from the Welcome app, without a password prompt
+- [ ] Live session: Meta+L blanks the screen and any key brings the desktop back without a password; saving a Wi-Fi password asks nothing about a wallet
+- [ ] While the installer is open, the computer does not go to sleep (`systemd-inhibit --list` shows "Zovelis OS installer")
 - [ ] Erase-disk install with default settings finishes; the slideshow is shown
 - [ ] Encrypted install: GRUB asks for the passphrase once, the system boots
 - [ ] "Install alongside" keeps an existing system and lists it in the boot menu

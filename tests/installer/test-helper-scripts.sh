@@ -211,6 +211,7 @@ cfg=$lr/home/zovelis/.config
 reset_live_root zovelis
 expect 0 "live settings: component runs for the live user" "$component" "$lr"
 check "live settings: no automatic screen lock" "grep -qx 'Autolock=false' '$cfg/kscreenlockerrc' && grep -qx 'LockOnResume=false' '$cfg/kscreenlockerrc'"
+check "live settings: no password needed after Meta+L" "grep -qx 'RequirePassword=false' '$cfg/kscreenlockerrc'"
 check "live settings: KDE Wallet off" "grep -qx 'Enabled=false' '$cfg/kwalletrc'"
 check "live settings: files belong to the live user" "[ \"\$(stat -c %u:%g:%a '$cfg' '$cfg/kscreenlockerrc' '$cfg/kwalletrc' | tr '\n' ' ')\" = '1000:1000:700 1000:1000:600 1000:1000:600 ' ]"
 printf '[Daemon]\nAutolock=true\n' > "$cfg/kscreenlockerrc"

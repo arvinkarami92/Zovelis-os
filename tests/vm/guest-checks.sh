@@ -70,6 +70,7 @@ if [ "$mode" = live ] && [ -n "$session" ]; then
     # lock itself, and must not ask to create a KDE wallet.
     live_home=$(getent passwd "$user" | cut -d: -f6)
     check "live session: no automatic screen lock" grep -qx 'Autolock=false' "$live_home/.config/kscreenlockerrc"
+    check "live session: unlocking needs no password" grep -qx 'RequirePassword=false' "$live_home/.config/kscreenlockerrc"
     check "live session: KDE Wallet off" grep -qx 'Enabled=false' "$live_home/.config/kwalletrc"
 fi
 check "login screen theme is Zovelis" grep -qx 'Current=zovelis' /etc/sddm.conf.d/10-zovelis.conf
@@ -137,7 +138,7 @@ if [ "$mode" = installed ]; then
         home=$(getent passwd "$u" | cut -d: -f6)
         check "home of $u is private" sh -c "[ \"\$(stat -c %a '$home')\" = 700 ]"
         # The live session's "never lock" setting must not reach real users.
-        check "screen of $u locks automatically" sh -c "! grep -qsx 'Autolock=false' '$home/.config/kscreenlockerrc'"
+        check "screen of $u locks automatically" sh -c "! grep -qsxE 'Autolock=false|RequirePassword=false' '$home/.config/kscreenlockerrc'"
     done
     check "machine-id set" test -s /etc/machine-id
     check "initramfs without live-system hooks" sh -c '! lsinitramfs /boot/initrd.img-"$(uname -r)" | grep -q "scripts/live"'
