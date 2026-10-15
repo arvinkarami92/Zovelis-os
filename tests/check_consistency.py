@@ -55,6 +55,26 @@ check(osr.get("ID") == "zovelis" and osr.get("ID_LIKE") == "debian", "os-release
 check(osr.get("VERSION_CODENAME") == "trixie", "os-release: VERSION_CODENAME=trixie (Debian tools need it)")
 check(osr.get("NAME") == "Zovelis OS", "os-release: NAME is 'Zovelis OS'")
 
+# --- Version: one number everywhere -----------------------------------------
+version = osr.get("VERSION_ID", "")
+check(bool(re.fullmatch(r"\d+(\.\d+)+", version)), f"os-release: VERSION_ID '{version}' is a version number")
+check(osr.get("VERSION") == version and osr.get("PRETTY_NAME") == f"Zovelis OS {version}",
+      "os-release: VERSION and PRETTY_NAME carry VERSION_ID")
+for script in ("live-build/auto/config", "scripts/build-iso.sh"):
+    default = re.search(r"ZOVELIS_VERSION:-([^}]+)\}", (REPO / script).read_text())
+    check(default is not None and default.group(1) == version,
+          f"{script}: default image version {default.group(1) if default else None!r} is the os-release version")
+# The installer shows the version of the system it installs (os-release).
+branding_strings = yaml.safe_load(
+    (PKG / "calamares-settings-zovelis/calamares/branding/zovelis/branding.desc").read_text())["strings"]
+for key in ("version", "shortVersion", "versionedName", "shortVersionedName"):
+    check("${VERSION_ID}" in str(branding_strings.get(key, "")), f"installer branding: {key} comes from os-release")
+for changelog in sorted(PKG.glob("*/debian/changelog")):
+    first = changelog.read_text().splitlines()[0]
+    m = re.match(r"^\S+ \(([^)]+)\)", first)
+    check(m is not None and (m.group(1) == version or m.group(1).startswith(version + ".")),
+          f"{changelog.parent.parent.name}: package version {m.group(1) if m else '?'} belongs to Zovelis OS {version}")
+
 # --- Boot loader name -----------------------------------------------------
 grub = shell_assignments(PKG / "zovelis-base/files/etc/default/grub.d/10-zovelis.cfg")
 distributor = grub.get("GRUB_DISTRIBUTOR", "")
