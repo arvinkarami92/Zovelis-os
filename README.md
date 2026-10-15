@@ -9,7 +9,10 @@ Zovelis OS does not fork anything. It is Debian plus six small Zovelis
 packages and an image recipe, so security fixes and hardware support come
 straight from Debian, and the whole system stays easy to maintain.
 
-![The Zovelis desktop (light and dark)](docs/images/desktop-light-dark.png)
+![Illustration of the Zovelis desktop, light and dark](docs/images/desktop-light-dark.png)
+
+*Illustration drawn from the real layout, colours and wallpaper (`branding/mockups.py`);
+screenshots of the running system come from the VM tests (`build/vm-results/`).*
 
 ## What you get
 
