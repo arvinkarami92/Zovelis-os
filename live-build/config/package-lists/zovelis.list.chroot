@@ -38,7 +38,7 @@ kmenuedit
 # Look: Breeze styles, icons, cursors, GTK integration, fonts
 breeze
 breeze-gtk-theme
-breeze-icon-theme
+kf6-breeze-icon-theme
 breeze-cursor-theme
 kde-config-gtk-style
 fonts-noto-core

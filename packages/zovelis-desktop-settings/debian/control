@@ -11,7 +11,7 @@ Architecture: all
 Multi-Arch: foreign
 Depends: ${misc:Depends},
          breeze-cursor-theme,
-         breeze-icon-theme,
+         kf6-breeze-icon-theme,
          kde-style-breeze,
          kwin-style-breeze,
          plasma-workspace (>= 4:6.3),
