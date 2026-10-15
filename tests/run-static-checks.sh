@@ -85,6 +85,18 @@ for f in glob.glob("packages/calamares-settings-zovelis/calamares/**/*.conf", re
 print(f"checked JSON and YAML files, {bad} problem(s)")
 sys.exit(1 if bad else 0)
 PY
+    rc=$?
+    # APT configuration snippets, read by APT itself (when available).
+    if have apt-config; then
+        for f in packages/zovelis-base/files/etc/apt/apt.conf.d/*; do
+            if ! apt-config -c "$f" dump >/dev/null 2>"$OUT/apt-config.err"; then
+                echo "invalid APT configuration $f: $(cat "$OUT/apt-config.err")"
+                rc=1
+            fi
+        done
+        echo "checked APT configuration snippets"
+    fi
+    return $rc
 }
 
 check_calamares_schemas() {
