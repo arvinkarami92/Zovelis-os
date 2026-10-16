@@ -2,6 +2,7 @@
 
 import { Router, type ApiRequest, type ApiResponse } from './router.ts';
 import type { App } from '../services/app.ts';
+import type { UserRow } from '../store/types.ts';
 import { ART_SCENES, FEED_PRESETS, MIN_AGE, REACTIONS, TOPICS } from '../core/defaults.ts';
 import { INTENTS } from '../core/wellbeing.ts';
 import { checkTone } from '../core/tone.ts';
@@ -63,23 +64,9 @@ export function buildRouter(): Router {
     setSession(null);
   });
 
-  r.get('/api/me', 'user', async ({ app, me }) => {
-    const [unreadNotifications, unreadMessages, followRequests, recovery] = await Promise.all([
-      notifications.unreadNotificationCount(app, me),
-      messages.unreadMessageCount(app, me),
-      app.store.count('follows', { followeeId: me.id, status: 'pending' }),
-      auth.pendingRecoveryRequests(app, me),
-    ]);
-    return {
-      me: meView(me, app.now()),
-      counts: {
-        notifications: unreadNotifications,
-        messages: unreadMessages,
-        followRequests,
-        recoveryRequests: recovery.filter((x) => !x.approvedByMe).length,
-      },
-    };
-  });
+  // Like /api/me, but answers "nobody" instead of 401 when logged out.
+  r.get('/api/session', 'public', async ({ app, viewer }) => (viewer ? sessionView(app, viewer) : { me: null, counts: null }));
+  r.get('/api/me', 'user', async ({ app, me }) => sessionView(app, me));
   r.patch('/api/me', 'user', async ({ app, me, body }) => ({ me: await users.updateProfile(app, me, body) }));
   r.patch('/api/me/settings', 'user', async ({ app, me, body }) => ({ me: await users.updateSettings(app, me, body) }));
   r.post('/api/me/password', 'user', async ({ app, me, body, req }) => auth.changePassword(app, me, { current: body.current, next: body.next }, req.token));
@@ -263,6 +250,24 @@ export function buildRouter(): Router {
   r.post('/api/media', 'user', async ({ app, me, req }) => uploadMedia(app, me, req.raw));
 
   return r;
+}
+
+async function sessionView(app: App, me: UserRow) {
+  const [unreadNotifications, unreadMessages, followRequests, recovery] = await Promise.all([
+    notifications.unreadNotificationCount(app, me),
+    messages.unreadMessageCount(app, me),
+    app.store.count('follows', { followeeId: me.id, status: 'pending' }),
+    auth.pendingRecoveryRequests(app, me),
+  ]);
+  return {
+    me: meView(me, app.now()),
+    counts: {
+      notifications: unreadNotifications,
+      messages: unreadMessages,
+      followRequests,
+      recoveryRequests: recovery.filter((x) => !x.approvedByMe).length,
+    },
+  };
 }
 
 function feedChanged(app: App, userId: string): void {

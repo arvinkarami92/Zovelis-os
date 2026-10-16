@@ -1,0 +1,103 @@
+/* Layout: a calm reading column between a quiet navigation rail and a tools rail;
+   on phones, one column with a top bar and a bottom tab bar.
+   Palette: pale sage paper, deep emerald for action, a coral "spark" for what is
+   live or needs you, violet reserved for AI labels. */
+:root {
+  --font-display: 'Bricolage Grotesque', 'Figtree', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Figtree', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --bg: #f3f5f1;
+  --surface: #ffffff;
+  --surface-2: #eef2ec;
+  --surface-3: #e2e8df;
+  --ink: #142019;
+  --ink-2: #445149;
+  --ink-3: #66736b;
+  --line: #dde4da;
+  --line-strong: #c5cfc2;
+  --brand: #0b7a61;
+  --brand-ink: #ffffff;
+  --brand-soft: #e2f4ec;
+  --brand-2: #12a37f;
+  --spark: #c8432a;
+  --spark-soft: #ffe7df;
+  --sun: #f2b33d;
+  --ai: #6a4fd6;
+  --ai-soft: #ece7ff;
+  --danger: #b8372d;
+  --danger-soft: #fbe2de;
+  --ok: #1d7f47;
+  --overlay: rgb(12 20 16 / 0.45);
+  --shadow: 0 1px 2px rgb(20 32 25 / 0.06), 0 10px 28px rgb(20 32 25 / 0.08);
+  --shadow-lg: 0 24px 64px rgb(20 32 25 / 0.22);
+
+  --radius: 16px;
+  --radius-sm: 10px;
+  --header-h: 56px;
+  --tabbar-h: 64px;
+  --text-scale: 1;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #0c1210;
+    --surface: #131b18;
+    --surface-2: #19231f;
+    --surface-3: #212e29;
+    --ink: #e5eee9;
+    --ink-2: #aab9b1;
+    --ink-3: #82938a;
+    --line: #23302b;
+    --line-strong: #34453d;
+    --brand: #3fd3a5;
+    --brand-ink: #04211a;
+    --brand-soft: #12322a;
+    --brand-2: #63e2bb;
+    --spark: #ff8a6e;
+    --spark-soft: #3a1f18;
+    --sun: #f5c25f;
+    --ai: #ab97ff;
+    --ai-soft: #251d48;
+    --danger: #ff8478;
+    --danger-soft: #3b1915;
+    --ok: #57d48c;
+    --overlay: rgb(0 0 0 / 0.6);
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 28px rgb(0 0 0 / 0.35);
+    --shadow-lg: 0 24px 64px rgb(0 0 0 / 0.6);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #0c1210;
+  --surface: #131b18;
+  --surface-2: #19231f;
+  --surface-3: #212e29;
+  --ink: #e5eee9;
+  --ink-2: #aab9b1;
+  --ink-3: #82938a;
+  --line: #23302b;
+  --line-strong: #34453d;
+  --brand: #3fd3a5;
+  --brand-ink: #04211a;
+  --brand-soft: #12322a;
+  --brand-2: #63e2bb;
+  --spark: #ff8a6e;
+  --spark-soft: #3a1f18;
+  --sun: #f5c25f;
+  --ai: #ab97ff;
+  --ai-soft: #251d48;
+  --danger: #ff8478;
+  --danger-soft: #3b1915;
+  --ok: #57d48c;
+  --overlay: rgb(0 0 0 / 0.6);
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 28px rgb(0 0 0 / 0.35);
+  --shadow-lg: 0 24px 64px rgb(0 0 0 / 0.6);
+  color-scheme: dark;
+}
+
+:root[data-text='sm'] { --text-scale: 0.93; }
+:root[data-text='lg'] { --text-scale: 1.12; }

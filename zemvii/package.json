@@ -21,5 +21,8 @@
     "typecheck": "npm run typecheck -w server && npm run typecheck -w web",
     "e2e": "node scripts/e2e.mjs",
     "check": "npm run typecheck && npm test"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.56.1"
   }
 }
