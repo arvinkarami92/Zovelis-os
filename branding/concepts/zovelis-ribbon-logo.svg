@@ -1,0 +1,44 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Zovelis ribbon logo: gradient "Z" mark above a rounded monoline wordmark. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="740" viewBox="250 270 760 740">
+  <defs>
+    <linearGradient id="teal" x1="400" y1="300" x2="853" y2="470" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#55B6C0"/>
+      <stop offset="0.6" stop-color="#3E8FAB"/>
+      <stop offset="1" stop-color="#3478A6"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="853" y1="320" x2="410" y2="760" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2233B0"/>
+      <stop offset="0.25" stop-color="#1A24A6"/>
+      <stop offset="0.6" stop-color="#3550A8"/>
+      <stop offset="1" stop-color="#4885B2"/>
+    </linearGradient>
+    <radialGradient id="dusk" cx="600" cy="670" r="110" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8A7A8C" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#8A7A8C" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="orange" x1="560" y1="740" x2="853" y2="610" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FF7F52"/>
+      <stop offset="0.5" stop-color="#FF9A4E"/>
+      <stop offset="1" stop-color="#FFC24E"/>
+    </linearGradient>
+  </defs>
+
+  <!-- the mark: a diagonal ribbon between two leaf-shaped bars -->
+  <path fill="url(#blue)" d="M853 300 V390 C853 455 830 495 782 533 L455 765 H445 C416 765 398 744 398 708 C398 668 416 640 452 610 L640 455 Z"/>
+  <path fill="url(#dusk)" d="M853 300 V390 C853 455 830 495 782 533 L455 765 H445 C416 765 398 744 398 708 C398 668 416 640 452 610 L640 455 Z"/>
+  <path fill="url(#teal)" d="M400 470 H585 C612 470 632 463 655 449 L853 300 H530 C455 300 398 350 398 422 Z"/>
+  <path fill="url(#orange)" d="M455 765 H712 C790 765 853 705 853 640 V601 H722 C690 601 662 608 632 627 Z"/>
+
+  <!-- wordmark: monoline strokes with round ends -->
+  <g transform="translate(-3 0)" fill="none" stroke="#111111" stroke-width="34" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M294 860 H386 L294 957 H392"/>
+    <circle cx="478" cy="907" r="50"/>
+    <path d="M555 860 L604 958 L653 860"/>
+    <path d="M688 907 H773 C773 878 754 858 729 858 C703 858 686 880 686 907 C686 935 705 956 731 956 C747 956 759 950 769 942"/>
+    <path d="M815 808 V957"/>
+    <path d="M861 860 V957"/>
+    <path d="M963.2 864 C952.64 855 941.2 851 928 851 C912.16 851 902.48 861 902.48 875 C902.48 890 913.92 896 928 902 L950 911 C964.08 917 972 926 972 939 C972 955 958.8 963 941.2 963 C926.24 963 913.04 957 902.48 946"/>
+  </g>
+  <circle cx="856" cy="807" r="20" fill="#111111"/>
+</svg>
