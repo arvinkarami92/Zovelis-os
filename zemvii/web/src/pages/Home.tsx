@@ -166,7 +166,14 @@ export function Home() {
           options={[
             { value: 'friends', label: 'Friends' },
             { value: 'mix', label: 'Mix' },
-            { value: 'clips', label: (<><Clapperboard size={16} /> Clips</>) as unknown as string },
+            {
+              value: 'clips',
+              label: (
+                <>
+                  <Clapperboard size={16} /> Clips
+                </>
+              ),
+            },
           ]}
         />
       </div>

@@ -1,7 +1,7 @@
 // Write a post: text, photos or video or generative art, an audience, and an
 // honest origin label.
 
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Bot, Clapperboard, Globe, Heart, ImagePlus, Leaf, Lock, Palette, Sparkles, Star, Users, X } from 'lucide-react';
 import type { CircleView } from '../../../server/src/services/graph.ts';
 import type { PostView } from '../../../server/src/services/views.ts';
@@ -50,6 +50,8 @@ export function Composer({ defaults = {}, onPosted, compact }: { defaults?: Comp
   const file = useRef<HTMLInputElement>(null);
   const guard = useToneGuard();
   const circles = useApi<{ items: CircleView[] }>(audience === 'circle' ? '/circles' : null);
+  // New seeds each time the picker opens, stable while it is open.
+  const artSeeds = useMemo(() => (meta?.artScenes ?? []).map(() => Math.floor(Math.random() * 100000)), [artPicker, meta?.artScenes]);
   const inSpace = Boolean(defaults.spaceId);
   if (!me) return null;
 
@@ -211,8 +213,8 @@ export function Composer({ defaults = {}, onPosted, compact }: { defaults?: Comp
         <Sheet title="Add generative art" onClose={() => setArtPicker(false)}>
           <p className="muted">Pick a scene. Each one is drawn from code, so it's labelled human-made art unless you say otherwise.</p>
           <div className="art-grid">
-            {(meta?.artScenes ?? []).map((scene) => {
-              const seed = Math.floor(Math.random() * 100000);
+            {(meta?.artScenes ?? []).map((scene, i) => {
+              const seed = artSeeds[i] ?? i;
               return (
                 <button
                   key={scene}

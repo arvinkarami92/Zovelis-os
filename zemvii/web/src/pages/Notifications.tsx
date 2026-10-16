@@ -120,7 +120,9 @@ export function Notifications() {
             them asking. Two friends need to vouch.
           </p>
           <div className="row-between">
-            <span className="muted small num">{r.approvals} of 2 have vouched · expires {timeAgo(Date.now() * 2 - r.expiresAt)}</span>
+            <span className="muted small num">
+              {r.approvals} of 2 have vouched · expires in {Math.max(1, Math.round((r.expiresAt - Date.now()) / 3_600_000))} h
+            </span>
             {r.approvedByMe ? (
               <span className="pill pill-brand">You vouched</span>
             ) : (

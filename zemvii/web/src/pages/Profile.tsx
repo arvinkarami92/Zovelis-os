@@ -413,8 +413,7 @@ export function CirclesPage() {
   const toggleMember = async (circle: CircleView, user: UserSummary) => {
     const inIt = circle.members.some((m) => m.id === user.id);
     await api.post(`/circles/${circle.id}/members`, inIt ? { remove: [user.id] } : { add: [user.id] });
-    const updated = await circles.reload();
-    void updated;
+    void circles.reload();
     setEditing((c) => (c ? { ...c, members: inIt ? c.members.filter((m) => m.id !== user.id) : [...c.members, user] } : c));
   };
   const chat = async (circle: CircleView) => {
