@@ -111,6 +111,11 @@ export async function signup(app: App, input: SignupInput, userAgent = ''): Prom
   for (const [circleName, emoji, hue] of [['Close friends', '💛', 45], ['Family', '🏡', 200]] as const) {
     await app.store.insert('circles', { id: newId(), ownerId: user.id, name: circleName, emoji, hue, createdAt: now });
   }
+  try {
+    await app.onSignup(app, user);
+  } catch (error) {
+    app.log('onSignup hook failed', error);
+  }
   await notify(app, {
     userId: user.id,
     type: 'system',

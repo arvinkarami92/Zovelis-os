@@ -302,6 +302,11 @@ export async function createPost(app: App, me: UserRow, input: PostInput): Promi
   await app.store.insert('posts', post);
   await indexTopics(app, post);
   await notifyMentions(app, me, post, mentions, 'mentioned you in a post');
+  try {
+    app.onPost(app, post);
+  } catch (error) {
+    app.log('onPost hook failed', error);
+  }
   const ctx = await viewerContext(app, me);
   return (await hydratePosts(app, me, ctx, [post]))[0];
 }

@@ -17,7 +17,6 @@
     "build": "npm run build -w web",
     "build:demo": "npm run build:demo -w web",
     "start": "npm start -w server",
-    "seed": "npm run seed -w server",
     "test": "npm test -w server",
     "typecheck": "npm run typecheck -w server && npm run typecheck -w web",
     "e2e": "node scripts/e2e.mjs",

@@ -3,7 +3,7 @@
 // for the demo.
 
 import type { Store } from '../store/store.ts';
-import type { MessageRow } from '../store/types.ts';
+import type { MessageRow, PostRow, UserRow } from '../store/types.ts';
 
 export interface MediaStorage {
   /** Persist bytes and return the URL clients use to fetch them. */
@@ -24,6 +24,10 @@ export interface AppOptions {
   simulated?: boolean;
   /** Called after a message is stored (the demo uses it for persona replies). */
   onMessage?: (app: App, message: MessageRow) => void;
+  /** Called after an account is created (the demo uses it to welcome people into the demo world). */
+  onSignup?: (app: App, user: UserRow) => Promise<void>;
+  /** Called after a post is created (the demo's personas react to your posts). */
+  onPost?: (app: App, post: PostRow) => void;
   log?: (message: string, error?: unknown) => void;
 }
 
@@ -35,6 +39,8 @@ export interface App {
   minAge: number;
   simulated: boolean;
   onMessage: (app: App, message: MessageRow) => void;
+  onSignup: (app: App, user: UserRow) => Promise<void>;
+  onPost: (app: App, post: PostRow) => void;
   log: (message: string, error?: unknown) => void;
   /** Small per-process cache (ranked Mix feeds, so paging is stable). */
   cache: Map<string, { at: number; value: unknown }>;
@@ -49,6 +55,8 @@ export function createApp(options: AppOptions): App {
     minAge: options.minAge ?? 13,
     simulated: options.simulated ?? false,
     onMessage: options.onMessage ?? (() => {}),
+    onSignup: options.onSignup ?? (async () => {}),
+    onPost: options.onPost ?? (() => {}),
     log: options.log ?? ((message, error) => console.error(message, error ?? '')),
     cache: new Map(),
   };

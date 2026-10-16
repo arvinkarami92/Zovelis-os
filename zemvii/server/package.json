@@ -6,10 +6,10 @@
   "description": "Zemvii API server. No runtime dependencies: Node runs the TypeScript directly and stores data with node:sqlite.",
   "scripts": {
     "start": "node --disable-warning=ExperimentalWarning src/node/main.ts",
-    "dev": "node --disable-warning=ExperimentalWarning --watch src/node/main.ts",
-    "seed": "node --disable-warning=ExperimentalWarning src/node/seed-cli.ts",
+    "dev": "ZEMVII_SIMULATED=1 node --disable-warning=ExperimentalWarning --watch src/node/main.ts",
     "test": "node --disable-warning=ExperimentalWarning --test --test-reporter=spec \"test/**/*.test.ts\"",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "start:demo": "ZEMVII_SIMULATED=1 node --disable-warning=ExperimentalWarning src/node/main.ts"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",
