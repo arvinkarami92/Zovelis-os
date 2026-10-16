@@ -46,6 +46,11 @@ export const REACTIONS: Array<{ type: ReactionType; emoji: string; label: string
   { type: 'insight', emoji: '💡', label: 'Insightful' },
 ];
 
+/** Generative artwork scenes (text-on-art posts and the demo's media). */
+export const ART_SCENES = [
+  'mountains', 'ocean', 'city', 'desert', 'forest', 'aurora', 'stars', 'bloom', 'waves', 'lake', 'grid', 'blobs',
+] as const;
+
 export interface FeedPreset {
   id: string;
   label: string;

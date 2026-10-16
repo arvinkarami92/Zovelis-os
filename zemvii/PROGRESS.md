@@ -5,16 +5,16 @@ Branch: `zemvii` (the Zovelis OS files on `main` are untouched; Zemvii lives in 
 ## Completed
 
 - [x] Research on Facebook / Instagram / TikTok gaps (2025–2026 sources) → `docs/STRATEGY.md`
+- [x] Server foundation: schema, async Store, SQLite + memory adapters (contract tests on both)
+- [x] Core algorithms: feed dials ranking + explanations, tone check, wellbeing, payouts, visibility
+- [x] Services and API routes (~90 endpoints) with integration tests on both adapters (75 tests passing)
 
 ## In progress
 
-- [ ] Server foundation: schema, async Store, SQLite + memory adapters
+- [ ] Node HTTP server binding, demo seed data
 
 ## Not started
 
-- [ ] Core algorithms: feed dials ranking + explanations, tone check, wellbeing, payouts
-- [ ] Services and API routes with integration tests
-- [ ] Node HTTP server binding, demo seed data
 - [ ] Web app (design system, router, transports, all pages)
 - [ ] Browser end-to-end verification, live demo, push
 

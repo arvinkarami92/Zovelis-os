@@ -52,6 +52,10 @@ export const schema: Schema = {
     },
     indexes: [['authorId', 'createdAt'], ['createdAt'], ['spaceId', 'createdAt'], ['planId'], ['kind', 'createdAt']],
   },
+  postTopics: {
+    columns: { id: 'text', postId: 'text', topic: 'text', authorId: 'text', isPublic: 'bool', createdAt: 'int' },
+    indexes: [['topic', 'createdAt'], ['postId'], ['isPublic', 'createdAt']],
+  },
   reactions: {
     columns: { id: 'text', postId: 'text', userId: 'text', type: 'text', createdAt: 'int' },
     indexes: [['postId'], ['userId', 'createdAt']],

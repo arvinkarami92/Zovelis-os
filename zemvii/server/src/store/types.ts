@@ -191,6 +191,17 @@ export interface PostRow {
   editedAt: Millis | null;
 }
 
+/** One row per (post, topic) so topic pages and trending don't scan posts. */
+export interface PostTopicRow {
+  id: ID;
+  postId: ID;
+  topic: string;
+  authorId: ID;
+  /** Public, non-sponsored posts only count towards trending and topic pages. */
+  isPublic: boolean;
+  createdAt: Millis;
+}
+
 export interface ReactionRow {
   id: ID;
   postId: ID;
@@ -482,6 +493,7 @@ export interface Tables {
   circles: CircleRow;
   circleMembers: CircleMemberRow;
   posts: PostRow;
+  postTopics: PostTopicRow;
   reactions: ReactionRow;
   comments: CommentRow;
   saves: SaveRow;
