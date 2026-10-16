@@ -176,7 +176,7 @@ async function phoneJourney(browser) {
   await shot(page, 'conversation');
 
   await goto(page, '/notifications');
-  await page.getByText('asked you to vouch').waitFor();
+  await page.getByRole('heading', { name: /asked you to vouch/ }).waitFor();
   await shot(page, 'notifications');
 
   await goto(page, '/wellbeing');
@@ -222,7 +222,7 @@ async function desktopJourney(browser) {
   await page.locator('.why-chip').first().waitFor();
   await shot(page, 'desktop-home-mix');
   await goto(page, '/wellbeing');
-  await page.getByText('This week').waitFor();
+  await page.getByRole('heading', { name: 'This week', exact: true }).waitFor();
   await shot(page, 'desktop-wellbeing');
   await page.emulateMedia({ colorScheme: 'dark' });
   await goto(page, '/creator');

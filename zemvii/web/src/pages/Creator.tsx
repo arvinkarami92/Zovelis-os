@@ -118,7 +118,7 @@ export function CreatorPage() {
             <h2>Posts people valued most</h2>
             <p className="muted small">Ranked by saves, comments and tips, not by views.</p>
             {d.topPosts.length === 0 && <p className="muted">Post something and it will show up here.</p>}
-            <div className="table-wrap">
+            {d.topPosts.length > 0 && <div className="table-wrap">
               <table className="data-table">
                 <thead>
                   <tr>
@@ -143,7 +143,7 @@ export function CreatorPage() {
                   ))}
                 </tbody>
               </table>
-            </div>
+            </div>}
           </section>
         </>
       )}

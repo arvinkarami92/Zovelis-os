@@ -225,7 +225,7 @@ function suggestHandle(name: string): string {
 }
 
 export function Signup() {
-  const { demo, meta, setMe } = useSession();
+  const { demo, meta, setMe, refresh } = useSession();
   const [name, setName] = useState('');
   const [handle, setHandle] = useState('');
   const [handleTouched, setHandleTouched] = useState(false);
@@ -253,6 +253,7 @@ export function Signup() {
         tzOffsetMin: -new Date().getTimezoneOffset(),
       });
       setMe(result.me);
+      void refresh();
       navigate('/welcome', { replace: true });
     } catch (err) {
       setError({ message: errorMessage(err), field: err instanceof ApiError ? err.details?.field : undefined });
@@ -322,7 +323,7 @@ export function Signup() {
 }
 
 export function Login() {
-  const { setMe, demo } = useSession();
+  const { setMe, demo, refresh } = useSession();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -334,6 +335,7 @@ export function Login() {
     try {
       const result = await api.post<{ me: MeView }>('/auth/login', { identifier, password });
       setMe(result.me);
+      void refresh();
       navigate('/home', { replace: true });
     } catch (err) {
       setError(errorMessage(err));

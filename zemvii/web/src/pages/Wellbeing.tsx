@@ -126,17 +126,17 @@ export function WellbeingPage() {
               <div className="connect">
                 <MessagesSquare size={20} />
                 <strong className="num">{s.connections.conversations}</strong>
-                <span>conversations</span>
+                <span>conversation{s.connections.conversations === 1 ? '' : 's'}</span>
               </div>
               <div className="connect">
                 <MessageCircle size={20} />
                 <strong className="num">{s.connections.comments}</strong>
-                <span>comments you wrote</span>
+                <span>comment{s.connections.comments === 1 ? '' : 's'} you wrote</span>
               </div>
               <div className="connect">
                 <CalendarHeart size={20} />
                 <strong className="num">{s.connections.plans}</strong>
-                <span>plans you joined</span>
+                <span>plan{s.connections.plans === 1 ? '' : 's'} you joined</span>
               </div>
               <div className="connect">
                 <Heart size={20} />

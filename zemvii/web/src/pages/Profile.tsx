@@ -206,8 +206,8 @@ export function Profile({ handle }: { handle: string }) {
                 ) : (
                   <>
                     <FollowButton handle={p.handle} initial={rel?.following ?? 'none'} onChange={() => void profile.reload()} />
-                    <button className="btn btn-secondary btn-small" onClick={message}>
-                      <MessageCircle size={15} /> Message
+                    <button className="btn btn-secondary btn-small" onClick={message} aria-label="Message">
+                      <MessageCircle size={15} /> <span className="hide-narrow">Message</span>
                     </button>
                     {p.creator.supportersEnabled &&
                       (rel?.supporting ? (

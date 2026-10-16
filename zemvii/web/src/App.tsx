@@ -3,7 +3,7 @@ import { SessionProvider, useSession } from './lib/session.tsx';
 import { match, navigate, savedScroll, useRoute } from './lib/router.tsx';
 import { Spinner, ToastProvider } from './components/ui.tsx';
 import { Shell } from './components/Shell.tsx';
-import { Landing, Login, Recover, Signup, WhyPage } from './pages/Public.tsx';
+import { Landing, Login, PublicFrame, Recover, Signup, WhyPage } from './pages/Public.tsx';
 import { Onboarding } from './pages/Onboarding.tsx';
 import { ComposePage, DialsPage, Home, SavedPage } from './pages/Home.tsx';
 import { Clips } from './pages/Clips.tsx';
@@ -91,7 +91,11 @@ function Router() {
       const params = match(pattern, route.path);
       if (params) {
         const found = ROUTES.find(([p]) => p === pattern)!;
-        return <div className="public-page">{found[1](params)}</div>;
+        return (
+          <PublicFrame>
+            <div className="public-page">{found[1](params)}</div>
+          </PublicFrame>
+        );
       }
     }
     return <Landing />;

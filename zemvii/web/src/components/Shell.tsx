@@ -55,7 +55,7 @@ export function Ring({ fraction, size = 30, stroke = 4, label }: { fraction: num
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role={label ? 'img' : undefined} aria-label={label} aria-hidden={label ? undefined : true} className="ring">
       <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--surface-3)" strokeWidth={stroke} />
-      <circle
+      {clamped > 0.005 && <circle
         cx={size / 2}
         cy={size / 2}
         r={r}
@@ -65,7 +65,7 @@ export function Ring({ fraction, size = 30, stroke = 4, label }: { fraction: num
         strokeLinecap="round"
         strokeDasharray={`${c * clamped} ${c}`}
         transform={`rotate(-90 ${size / 2} ${size / 2})`}
-      />
+      />}
     </svg>
   );
 }

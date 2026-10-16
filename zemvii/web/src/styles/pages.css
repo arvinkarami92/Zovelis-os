@@ -635,19 +635,19 @@
 
 .home-head {
   position: sticky;
-  top: calc(env(safe-area-inset-top, 0px) + var(--header-h) + 8px);
+  top: calc(env(safe-area-inset-top, 0px) + var(--header-h));
   z-index: 20;
+  margin-block: -8px;
+  padding-block: 8px;
+  background: var(--bg);
 }
 
 @media (min-width: 760px) {
   .home-head {
-    top: calc(env(safe-area-inset-top, 0px) + 12px);
+    top: env(safe-area-inset-top, 0px);
+    margin-top: -12px;
+    padding-top: 12px;
   }
-}
-
-.home-head .segmented {
-  background: color-mix(in srgb, var(--surface-2) 88%, transparent);
-  backdrop-filter: blur(10px);
 }
 
 .new-banner {
@@ -1023,6 +1023,7 @@
 }
 
 .plan-date {
+  align-self: flex-start;
   display: grid;
   justify-items: center;
   align-content: center;
@@ -1215,6 +1216,7 @@
 
 .profile-actions {
   display: flex;
+  align-items: center;
   gap: 8px;
   flex-wrap: wrap;
   padding-bottom: 4px;
@@ -1458,10 +1460,10 @@
 /* ---- Notifications ------------------------------------------------------------------------------------ */
 
 .digest-banner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 10px 12px;
   padding: 14px 16px;
   border-radius: var(--radius);
   background: var(--brand-soft);
@@ -1470,7 +1472,12 @@
 
 .digest-banner > svg {
   color: var(--brand);
-  flex: none;
+  margin-top: 2px;
+}
+
+.digest-banner .btn {
+  grid-column: 2;
+  justify-self: start;
 }
 
 .recovery-card {
@@ -1627,7 +1634,18 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  flex-wrap: wrap;
+}
+
+.today-hero > .stack {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 420px) {
+  .today-hero .ring {
+    width: 84px;
+    height: 84px;
+  }
 }
 
 .chart-wrap {
