@@ -15,11 +15,13 @@
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "build": "npm run build -w web",
-    "build:demo": "npm run build:demo -w web",
+    "build:demo": "npm run build:demo -w web && node scripts/make-artifact.mjs",
     "start": "npm start -w server",
+    "start:demo": "npm run start:demo -w server",
     "test": "npm test -w server",
     "typecheck": "npm run typecheck -w server && npm run typecheck -w web",
-    "e2e": "node scripts/e2e.mjs",
+    "e2e": "npm run build && node scripts/e2e.mjs",
+    "e2e:demo": "npm run build:demo && node scripts/e2e.mjs demo",
     "check": "npm run typecheck && npm test"
   },
   "devDependencies": {
